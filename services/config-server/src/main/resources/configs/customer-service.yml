@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5436/albaridbank
+    username: albaridbank
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    authentication-database: admin
+    jpa:
+        hibernate:
+            ddl-auto: update
+            show-sql: true
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+    flyway: # is to manage the database schema in a structured and organized way
+        baseline-on-migrate: true
+        enabled: true
+        baseline-description: "Baseline for the database"
+        baseline-version: 0
+        user: ${spring.datasource.username}
+        password: ${spring.datasource.password}
+server:
+  port: 8090

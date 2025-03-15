@@ -1,0 +1,12 @@
+# add the configuration for the discovery server
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false # the Discovery server does not need to register itself with the Eureka server
+    fetch-registry: false # the Discovery server does not need to fetch the registry from the Eureka server
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/ # the URL for the Eureka server
+
+server:
+  port: 8761 # Port to run the server

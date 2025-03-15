@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: native
+  application:
+    name: config-server
+  cloud: # Configuration for Spring Cloud
+    config:
+      server:
+        native:
+          search-locations: classpath:/configs # Search for configuration files in the classpath. The configs server which will store all the configurations for all the other microservices
+        git:
+          uri:
+server:
+  port: 8888 # Port to run the server
