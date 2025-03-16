@@ -1,38 +1,54 @@
 package com.albaridbank.BankinApp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Table(name = "compte")
+@Table(name = "compte", indexes = {
+        @Index(name = "idx_compte_codcatcp", columnList = "codcatcp"),
+        @Index(name = "idx_compte_idenclie", columnList = "idenclie")
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString
+@ToString(exclude = {"client", "adresses"}) // Prevent circular references
 @Builder
-public class Compte {
+public class Compte implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "idencomp", nullable = false, precision = 12)
     private BigDecimal idencomp;
 
+    @NotNull(message = "Account category is required")
     @Column(name = "codcatcp", nullable = false, precision = 3)
     private BigDecimal codcatcp;
 
+    @NotNull(message = "Account subcategory is required")
     @Column(name = "codscatcp", nullable = false, precision = 2)
     private BigDecimal codscatcp;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "idenclie", nullable = false)
-    private Client idenclie;
+    @JsonIgnoreProperties({"comptes", "adresses"})
+    private Client client; // Renamed from idenclie for better Java convention
 
+    @NotBlank(message = "Account name is required")
     @Column(name = "inticomp", nullable = false, length = 120)
     private String inticomp;
 
+    @NotNull(message = "Opening date is required")
     @Column(name = "dateouve", nullable = false)
     private LocalDate dateouve;
 
@@ -57,12 +73,14 @@ public class Compte {
     @Column(name = "codclaure", precision = 2)
     private BigDecimal codclaure;
 
+    @NotBlank(message = "Account status is required")
     @Column(name = "codetacp", nullable = false, length = 1)
     private String codetacp;
 
     @Column(name = "cle_comp")
     private Short cleComp;
 
+    @NotNull(message = "Branch code is required")
     @Column(name = "codebpcpt", nullable = false, precision = 5)
     private BigDecimal codebpcpt;
 
@@ -78,6 +96,7 @@ public class Compte {
     @Column(name = "codbpini", precision = 5)
     private BigDecimal codbpini;
 
+    @NotBlank(message = "Account manager is required")
     @Column(name = "usrgestcp", nullable = false, length = 7)
     private String usrgestcp;
 
@@ -101,4 +120,8 @@ public class Compte {
 
     @Column(name = "codedevi", length = 4)
     private String codedevi;
+
+    @OneToMany(mappedBy = "compte", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("compte")
+    private List<AdresseLink> adresses;
 }

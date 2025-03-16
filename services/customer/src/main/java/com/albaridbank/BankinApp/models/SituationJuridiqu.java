@@ -1,10 +1,14 @@
 package com.albaridbank.BankinApp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -13,11 +17,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SituationJuridiqu {
+public class SituationJuridiqu implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "codsitju", nullable = false)
-    private Integer codsitju;
+    @NotNull(message = "Legal situation code cannot be null")
+    @Column(name = "codsitju", nullable = false, precision = 2)
+    private BigDecimal codsitju;
 
     @Column(name = "libesitu", length = 32)
     private String libesitu;
@@ -30,6 +36,7 @@ public class SituationJuridiqu {
     @Temporal(TemporalType.DATE)
     private Date datfineff;
 
-    @OneToMany(mappedBy = "situationJuridiqu")
+    @OneToMany(mappedBy = "situationJuridiqu", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("situationJuridiqu")
     private List<Client> clients;
 }

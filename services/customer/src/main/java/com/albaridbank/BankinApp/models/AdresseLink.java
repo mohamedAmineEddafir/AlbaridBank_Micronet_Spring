@@ -1,35 +1,46 @@
 package com.albaridbank.BankinApp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "adresse_link")
+@Table(name = "adresse_link", indexes = {
+        @Index(name = "idx_adresselink_idenclie", columnList = "idenclie"),
+        @Index(name = "idx_adresselink_idencomp", columnList = "idencomp")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdresseLink {
+public class AdresseLink implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "numeiden")
     private Long numeiden;
 
-    @ManyToOne // many addresses can belong to one client
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idenclie", nullable = false)
+    @JsonIgnoreProperties({"adresses", "hibernateLazyInitializer", "handler"})
     private Client client;
 
-    @ManyToOne // many addresses can belong to one account
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idencomp")
+    @JsonIgnoreProperties({"adresseLinks", "hibernateLazyInitializer", "handler"})
     private Compte compte;
 
+    @NotBlank(message = "Address type code cannot be empty")
     @Column(name = "codtypad", nullable = false, length = 2)
     private String codtypad;
 
+    @NotBlank(message = "Address category code cannot be empty")
     @Column(name = "codcatad", nullable = false, length = 2)
     private String codcatad;
 

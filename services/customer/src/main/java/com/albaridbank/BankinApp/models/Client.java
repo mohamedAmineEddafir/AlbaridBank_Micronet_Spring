@@ -1,24 +1,37 @@
 package com.albaridbank.BankinApp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "client")
+@Table(name = "client", indexes = {
+        @Index(name = "idx_client_statclie", columnList = "statclie"),
+        @Index(name = "idx_client_typeclie", columnList = "typeclie"),
+        @Index(name = "idx_client_nomrais", columnList = "nomrais")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+@ToString(exclude = {"comptes", "adresses"}) // Prevent circular references in toString()
+public class Client implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "idenclie", nullable = false)
-    private Long idenclie;
+    @Column(name = "idenclie", nullable = false, precision = 10)
+    private BigDecimal idenclie;
 
     @Column(name = "cateclie", nullable = false)
     private Integer cateclie;
@@ -26,6 +39,7 @@ public class Client {
     @Column(name = "typeclie", length = 5)
     private String typeclie;
 
+    @NotBlank(message = "Client name cannot be empty")
     @Column(name = "nomrais", nullable = false, length = 120)
     private String nomrais;
 
@@ -48,7 +62,7 @@ public class Client {
     private String numeFax;
 
     @Column(name = "datenais")
-    @Temporal(TemporalType.DATE) // This annotation is used to specify the type of the date field
+    @Temporal(TemporalType.DATE)
     private Date datenais;
 
     @Column(name = "lieunais", length = 30)
@@ -73,12 +87,14 @@ public class Client {
     @Column(name = "situfami")
     private Integer situfami;
 
-    @ManyToOne // many clients have one situation juridique
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "clients"})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "situjuri", referencedColumnName = "codsitju")
     private SituationJuridiqu situationJuridiqu;
 
-    @ManyToOne // many clients have one socio-professional category
-    @JoinColumn(name = "codsocpr", referencedColumnName = "codsocpr") //
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "clients"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "codsocpr", referencedColumnName = "codsocpr")
     private CateSocioProf cateSocioProf;
 
     @Column(name = "sectacti", length = 5)
@@ -96,6 +112,7 @@ public class Client {
     @Column(name = "numregco", length = 20)
     private String numregco;
 
+    @Email(message = "Invalid email format")
     @Column(name = "adremail", length = 60)
     private String adremail;
 
@@ -146,8 +163,8 @@ public class Client {
     @Column(name = "numcenrs", length = 15)
     private String numcenrs;
 
-    @Column(name = "agegescl")
-    private Long agegescl;
+    @Column(name = "agegescl", precision = 5)
+    private BigDecimal agegescl;
 
     @Column(name = "usegescl", length = 7)
     private String usegescl;
@@ -188,6 +205,7 @@ public class Client {
     @Column(name = "codpayspass", length = 2)
     private String codpayspass;
 
+    @Email(message = "Invalid email format")
     @Column(name = "adressemailnov", length = 120)
     private String adressemailnov;
 
@@ -197,9 +215,11 @@ public class Client {
     @Column(name = "code_info_clt")
     private Integer codeInfoClt;
 
-    @OneToMany(mappedBy = "client") // one client can have many accounts
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnoreProperties("client")
     private List<Compte> comptes;
 
-    @OneToMany(mappedBy = "client") // one client can have many addresses links
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnoreProperties("client")
     private List<AdresseLink> adresses;
 }

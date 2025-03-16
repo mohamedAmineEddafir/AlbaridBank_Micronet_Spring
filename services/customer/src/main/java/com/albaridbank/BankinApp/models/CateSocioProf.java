@@ -1,10 +1,14 @@
 package com.albaridbank.BankinApp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +17,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CateSocioProf {
+public class CateSocioProf implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "codsocpr", nullable = false)
-    private Long codsocpr;
+    @Column(name = "codsocpr", nullable = false, precision = 3)
+    private BigDecimal codsocpr;
 
+    @NotBlank(message = "Social professional category name cannot be empty")
     @Column(name = "libsocpr", nullable = false, length = 200)
     private String libsocpr;
 
@@ -33,7 +39,7 @@ public class CateSocioProf {
     @Temporal(TemporalType.DATE)
     private Date datfineff;
 
-    @OneToMany(mappedBy = "cateSocioProf") // one cate socio prof can classify many clients
+    @OneToMany(mappedBy = "cateSocioProf", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("cateSocioProf")
     private List<Client> clients;
-
 }
