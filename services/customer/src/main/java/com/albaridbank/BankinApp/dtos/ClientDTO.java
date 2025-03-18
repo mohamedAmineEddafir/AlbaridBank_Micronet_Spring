@@ -3,12 +3,17 @@ package com.albaridbank.BankinApp.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientDTO {
     private String clientId;
 
@@ -24,14 +29,17 @@ public class ClientDTO {
     private String phoneNumber;
     private Integer status;
     private Date birthDate;
+    private String birthPlace;
 
-    // Reference data
-    private String legalSituationCode;
+    // Situation Juridique
+    private BigDecimal legalSituationCode;
     private String legalSituationName;
-    private String socioProfessionalCode;
+    // CateSocioProf
+    private BigDecimal socioProfessionalCode;
     private String socioProfessionalName;
 
     // Related data (simplified for DTOs)
     // private List<AccountSummaryDTO> accounts;
+    private List<CompteDTO> accounts;
     private List<AdressLinkDTO> addresses;
 }
