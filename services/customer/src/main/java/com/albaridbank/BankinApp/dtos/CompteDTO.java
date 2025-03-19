@@ -18,7 +18,7 @@ public class CompteDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String CompteId;
+    private String compteId;
 
     @NotNull(message = "Account category code is required")
     private String categoryCode;
