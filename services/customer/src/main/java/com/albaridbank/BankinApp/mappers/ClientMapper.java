@@ -20,18 +20,18 @@ public interface ClientMapper {
      * Convertit une entité Client en DTO pour l'affichage
      */
     @Mapping(source = "idenclie", target = "clientId")
-    @Mapping(source = "nomclie", target = "lastName")
-    @Mapping(source = "prenomcl", target = "firstName")
+    @Mapping(source = "nomrais", target = "lastName")
+    @Mapping(source = "prenclie", target = "firstName")
     @Mapping(source = "adremail", target = "email")
-    @Mapping(source = "datnaiss", target = "birthDate")
+    @Mapping(source = "datenais", target = "birthDate")
     @Mapping(source = "lieunais", target = "birthPlace")
     @Mapping(source = "codetati", target = "status")
     // Mappings pour Situation Juridique
     @Mapping(source = "situationJuridiqu.codsitju", target = "legalSituationCode")
-    @Mapping(source = "situationJuridiqu.libsitju", target = "legalSituationName")
+    @Mapping(source = "situationJuridiqu.libesitu", target = "legalSituationName")
     // Mappings pour CateSocioProf
     @Mapping(source = "cateSocioProf.codsocpr", target = "socioProfessionalCode")
-    @Mapping(source = "cateSocioProf.libcsocpr", target = "socioProfessionalName")
+    @Mapping(source = "cateSocioProf.libsocpr", target = "socioProfessionalName")
     // Collections
     @Mapping(source = "comptes", target = "accounts")
     @Mapping(source = "adresses", target = "addresses")
