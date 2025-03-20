@@ -7,18 +7,33 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, BigDecimal>, JpaSpecificationExecutor<Client> {
-    // Find Client by Status
-    List<Client> findByStatclie(Integer statclie);
 
-    // Find Client by id
-    Optional<Client> findByIdenclie(BigDecimal idenclie);
+    /**
+     * Retrieves a list of clients by their status.
+     *
+     * @param status the status of the clients to retrieve
+     * @return a list of clients with the specified status
+     */
+    List<Client> getClientsByStatus(Integer status);
 
-    // Find Client By Category
-    List<Client> findByCateclie(Integer cateclie);
+/**
+     * Retrieves clients by their full name (last name and first name).
+     *
+     * @param nomrais the last name of the clients to retrieve
+     * @param prenclie the first name of the clients to retrieve
+     * @return a list of clients with the specified full name
+     */
+    List<Client> findByNomraisAndPrenclie(String nomrais, String prenclie);
 
-
+    /*
+     * Searches for clients by a partial match on their last name or first name.
+     *
+     * @param nom the partial last name to search for
+     * @param prenom the partial first name to search for
+     * @return a list of clients that match the partial last name or first name
+     * List<Client> findByNomraisContainingOrPrenclieContaining(String nom, String prenom);
+     **/
 }
