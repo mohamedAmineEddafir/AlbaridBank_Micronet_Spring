@@ -86,7 +86,11 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<ClientDTO> getClientsByFullName(String lastName, String firstName) {
         log.info("Getting clients by name: {} {}", lastName, firstName);
-        return clientMapper.toDtoList(clientRepository.findByNomraisAndPrenclie(lastName, firstName));
+        List<ClientDTO> clients = clientMapper.toDtoList(clientRepository.findByNomraisAndPrenclie(lastName, firstName));
+        if (clients.isEmpty()) {
+            throw new EntityNotFoundException("No clients found with name: " + lastName + " " + firstName);
+        }
+        return clients;
     }
 
     /*
