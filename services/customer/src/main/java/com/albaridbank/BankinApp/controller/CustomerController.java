@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/Client")
+@RequestMapping("/api/v1/client")
 @RequiredArgsConstructor
 @Slf4j
 //@Tag(name = "Client", description = "The Client API") // Documentation OpenAPI/Swagger 3 (Springdoc)
