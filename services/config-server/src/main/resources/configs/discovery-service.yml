@@ -1,5 +1,6 @@
 # add the configuration for the discovery server
 eureka:
+  renewalPercentThreshold: 0.85 # the percentage of renewals that must succeed to avoid the server shutting down
   instance:
     hostname: localhost
   client:
