@@ -36,10 +36,10 @@ public class CustomerController {
     public ResponseEntity<Page<ClientDTO>> getAllClients(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "clientId") String sort) {
+            @RequestParam(defaultValue = "prenclie") String sort) {
         log.info("Getting all clients with pagination: page={}, size={}, sort={}", page, size, sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        return ResponseEntity.ok(clientService.getAllClients(pageable));
+        return ResponseEntity.ok(clientService.getAllCli(pageable));
     }
 
     /**

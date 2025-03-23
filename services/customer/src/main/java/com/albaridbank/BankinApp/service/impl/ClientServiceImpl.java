@@ -41,7 +41,7 @@ public class ClientServiceImpl implements ClientService {
      * @return a list of ClientDTO objects representing all clients
      */
     @Override
-    public Page<ClientDTO> getAllClients(Pageable pageable) {
+    public Page<ClientDTO> getAllCli(Pageable pageable) {
         log.info("Getting all clients with pagination: {}", pageable);
         return clientRepository.findAll(pageable).map(clientMapper::toDto);
     }
