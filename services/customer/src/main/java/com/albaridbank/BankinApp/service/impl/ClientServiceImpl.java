@@ -73,7 +73,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<ClientDTO> getClientByStatus(Integer status) {
         log.info("Getting clients by status: {}", status);
-        return clientMapper.toDtoList(clientRepository.getClientsByStatus(status));
+        return clientMapper.toDtoList(clientRepository.findByCodetati(status));
     }
 
     /**
