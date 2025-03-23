@@ -20,7 +20,7 @@ public interface ClientService {
      *
      * @return a list of ClientDTO objects representing all clients
      */
-    Page<ClientDTO> getAllClients(Pageable pageable);
+    Page<ClientDTO> getAllCli(Pageable pageable);
 
     /**
      * Retrieves a client by their ID.
