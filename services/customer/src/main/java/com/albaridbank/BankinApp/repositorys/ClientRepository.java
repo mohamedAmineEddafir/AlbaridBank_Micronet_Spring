@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+* @author Mohamed Amine Eddafir
+*/
 @Repository
 public interface ClientRepository extends JpaRepository<Client, BigDecimal>, JpaSpecificationExecutor<Client> {
 
