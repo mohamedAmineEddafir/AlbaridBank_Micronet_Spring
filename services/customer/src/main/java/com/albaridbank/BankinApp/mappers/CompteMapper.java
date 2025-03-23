@@ -29,7 +29,7 @@ public interface CompteMapper {
     @Mapping(source = "datogmaj", target = "lastUpdateDate")
     @Mapping(source = "bloqadr", target = "addressBlocked")
     @Mapping(source = "datetacp", target = "accountStatusDate")
-    @Mapping(source = "nSig", target = "signaturesCount")
+    @Mapping(source = "NSig", target = "signaturesCount")
     @Mapping(source = "codeinst", target = "institutionCode")
     @Mapping(source = "codclaure", target = "rateClass")
     @Mapping(source = "codetacp", target = "accountStatus")
