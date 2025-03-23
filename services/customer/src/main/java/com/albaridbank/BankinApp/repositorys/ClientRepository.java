@@ -14,10 +14,10 @@ public interface ClientRepository extends JpaRepository<Client, BigDecimal>, Jpa
     /**
      * Retrieves a list of clients by their status.
      *
-     * @param status the status of the clients to retrieve
+     * @param codetati the status of the clients to retrieve
      * @return a list of clients with the specified status
      */
-    List<Client> getClientsByStatus(Integer status);
+    List<Client> findByCodetati(Integer codetati);
 
 /**
      * Retrieves clients by their full name (last name and first name).
