@@ -12,7 +12,8 @@ package com.albaridbank.BankinApp.models;
     import java.io.Serial;
     import java.io.Serializable;
     import java.math.BigDecimal;
-    import java.util.Date;
+    import java.time.LocalDate;
+    //import java.util.Date;
     import java.util.List;
 
     /**
@@ -102,7 +103,7 @@ package com.albaridbank.BankinApp.models;
          */
         @Column(name = "datenais")
         @Temporal(TemporalType.DATE)
-        private Date datenais;
+        private LocalDate datenais;
 
         /**
          * Place of birth of the client.
@@ -133,7 +134,7 @@ package com.albaridbank.BankinApp.models;
          */
         @Column(name = "datpieid")
         @Temporal(TemporalType.DATE)
-        private Date datpieid;
+        private LocalDate datpieid;
 
         /**
          * Monthly income of the client.
@@ -266,14 +267,14 @@ package com.albaridbank.BankinApp.models;
          */
         @Column(name = "datecrea")
         @Temporal(TemporalType.DATE)
-        private Date datecrea;
+        private LocalDate datecrea;
 
         /**
          * Last update date of the client record.
          */
         @Column(name = "datogmaj")
         @Temporal(TemporalType.DATE)
-        private Date datogmaj;
+        private LocalDate datogmaj;
 
         /**
          * Housing ownership indicator.

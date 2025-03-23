@@ -108,7 +108,7 @@ public class Compte implements Serializable {
      * Signature number.
      */
     @Column(name = "n_sig")
-    private Integer nSig;
+    private Integer NSig;
 
     /**
      * Institution code.

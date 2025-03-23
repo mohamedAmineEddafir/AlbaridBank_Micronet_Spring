@@ -10,7 +10,7 @@ package com.albaridbank.BankinApp.models;
     import java.io.Serial;
     import java.io.Serializable;
     import java.math.BigDecimal;
-    import java.util.Date;
+    import java.time.LocalDate;
     import java.util.List;
 
     /**
@@ -53,14 +53,14 @@ package com.albaridbank.BankinApp.models;
          */
         @Column(name = "datdebeff", nullable = false)
         @Temporal(TemporalType.DATE)
-        private Date datdebeff;
+        private LocalDate datdebeff;
 
         /**
          * End date of the socio-professional category's effectiveness.
          */
         @Column(name = "datfineff")
         @Temporal(TemporalType.DATE)
-        private Date datfineff;
+        private LocalDate datfineff;
 
         /**
          * List of clients associated with this socio-professional category.

@@ -10,7 +10,7 @@ package com.albaridbank.BankinApp.models;
 
     import java.io.Serial;
     import java.io.Serializable;
-    import java.util.Date;
+    import java.time.LocalDate;
 
     /**
      * Entity class representing a link between an address and a client or account.
@@ -122,7 +122,7 @@ package com.albaridbank.BankinApp.models;
          */
         @Column(name = "datogmaj")
         @Temporal(TemporalType.DATE)
-        private Date datogmaj;
+        private LocalDate datogmaj;
 
         /**
          * Office code of the address.

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -47,14 +47,14 @@ public class SituationJuridiqu implements Serializable {
      */
     @Column(name = "datdebeff")
     @Temporal(TemporalType.DATE)
-    private Date datdebeff;
+    private LocalDate datdebeff;
 
     /**
      * End date of the legal situation's effectiveness.
      */
     @Column(name = "datfineff")
     @Temporal(TemporalType.DATE)
-    private Date datfineff;
+    private LocalDate datfineff;
 
     /**
      * List of clients associated with this legal situation.
