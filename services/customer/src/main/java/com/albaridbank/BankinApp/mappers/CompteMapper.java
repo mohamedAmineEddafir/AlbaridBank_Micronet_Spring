@@ -21,8 +21,10 @@ public interface CompteMapper {
      */
     @Mapping(source = "idencomp", target = "compteId")
     @Mapping(source = "codcatcp", target = "categoryCode")
-    @Mapping(source = "codscatcp", target = "subCategoryCode")
+    @Mapping(source = "codcatcp", target = "subCategoryCode")
     @Mapping(source = "client.idenclie", target = "clientId")
+    @Mapping(source = "client.nomrais", target = "clientLastName")
+    @Mapping(source = "client.prenclie", target = "clientFirstName")
     @Mapping(source = "inticomp", target = "accountTitle")
     @Mapping(source = "dateouve", target = "openingDate")
     @Mapping(source = "dateclot", target = "closingDate")
