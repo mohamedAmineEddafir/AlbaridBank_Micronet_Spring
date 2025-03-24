@@ -30,6 +30,7 @@ public class ClientDTO {
     private Integer status;
     private Date birthDate;
     private String birthPlace;
+    private BigDecimal income;
 
     // Situation Juridique
     private BigDecimal legalSituationCode;

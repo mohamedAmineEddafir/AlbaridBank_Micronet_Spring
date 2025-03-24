@@ -22,10 +22,13 @@ public interface ClientMapper {
     @Mapping(source = "idenclie", target = "clientId")
     @Mapping(source = "nomrais", target = "lastName")
     @Mapping(source = "prenclie", target = "firstName")
+    @Mapping(source= "sexeclie", target = "clientType")
     @Mapping(source = "adremail", target = "email")
+    @Mapping(source = "numeGsm", target = "phoneNumber")
     @Mapping(source = "datenais", target = "birthDate")
     @Mapping(source = "lieunais", target = "birthPlace")
     @Mapping(source = "codetati", target = "status")
+    @Mapping(source = "revemens", target = "income")
     // Mappings pour Situation Juridique
     @Mapping(source = "situationJuridiqu.codsitju", target = "legalSituationCode")
     @Mapping(source = "situationJuridiqu.libesitu", target = "legalSituationName")

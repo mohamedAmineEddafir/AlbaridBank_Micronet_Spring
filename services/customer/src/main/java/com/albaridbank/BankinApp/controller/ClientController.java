@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 //@Tag(name = "Client", description = "The Client API") // Documentation OpenAPI/Swagger 3 (Springdoc)
-public class CustomerController {
+public class ClientController {
     // Dependency injection via constructor (thanks to @RequiredArgsConstructor)
     private final ClientService clientService;
 
@@ -36,7 +36,7 @@ public class CustomerController {
     public ResponseEntity<Page<ClientDTO>> getAllClients(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "prenclie") String sort) {
+            @RequestParam(defaultValue = "idenclie") String sort) {
         log.info("Getting all clients with pagination: page={}, size={}, sort={}", page, size, sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
         return ResponseEntity.ok(clientService.getAllCli(pageable));
