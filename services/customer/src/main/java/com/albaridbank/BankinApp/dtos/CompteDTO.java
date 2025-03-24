@@ -28,6 +28,7 @@ public class CompteDTO implements Serializable {
 
     // Client reference - using ID only to avoid circular references
     private String clientId;
+    private String clientLastName, clientFirstName;
 
     @NotBlank(message = "Account title cannot be empty")
     private String accountTitle;
