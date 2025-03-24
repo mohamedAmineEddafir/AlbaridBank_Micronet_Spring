@@ -67,7 +67,4 @@ public class CompteDTO implements Serializable {
     private String relationshipType;
     private String releaseInterval;
     private String currencyCode;
-
-    // Simplified list of addresses - optional
-    private List<AdressLinkDTO> addresses;
 }

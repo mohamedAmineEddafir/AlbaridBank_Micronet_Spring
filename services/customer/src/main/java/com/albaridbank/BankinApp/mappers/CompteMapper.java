@@ -47,7 +47,7 @@ public interface CompteMapper {
     @Mapping(source = "typerela", target = "relationshipType")
     @Mapping(source = "perirele", target = "releaseInterval")
     @Mapping(source = "codedevi", target = "currencyCode")
-    @Mapping(source = "adresses", target = "addresses")
+    //@Mapping(source = "adresses", target = "addresses")
     CompteDTO toDto(Compte compte);
 
     /**
