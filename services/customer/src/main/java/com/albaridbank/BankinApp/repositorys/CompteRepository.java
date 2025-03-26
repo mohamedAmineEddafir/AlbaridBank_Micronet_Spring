@@ -1,6 +1,5 @@
 package com.albaridbank.BankinApp.repositorys;
 
-import com.albaridbank.BankinApp.models.Client;
 import com.albaridbank.BankinApp.models.Compte;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -12,11 +11,9 @@ import java.util.List;
 
 @Repository
 public interface CompteRepository extends JpaRepository<Compte, BigDecimal>, JpaSpecificationExecutor<Compte> {
-    // Find accounts by client
-    List<Compte> findByClient(Client client);
 
     // Find accounts by category and subcategory
-    List<Compte> findByCodcatcpAndCodscatcp(BigDecimal codcatcp, BigDecimal codscatcp);
+    List<Compte> findCompteByCodcatcp(BigDecimal codcatcp);
 
     // Find accounts opened after a specific date
     List<Compte> findByDateouveAfter(LocalDate dateouve);
