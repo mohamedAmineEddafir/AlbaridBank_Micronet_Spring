@@ -16,7 +16,7 @@ public interface CompteRepository extends JpaRepository<Compte, BigDecimal>, Jpa
     List<Compte> findCompteByCodcatcp(BigDecimal codcatcp);
 
     // Find accounts opened after a specific date
-    List<Compte> findByDateouveAfter(LocalDate dateouve);
+    List<Compte> findByDateouveGreaterThanEqual(LocalDate dateouve);
 
     // Find accounts by branch code
     List<Compte> findByCodebpcpt(BigDecimal codebpcpt);
