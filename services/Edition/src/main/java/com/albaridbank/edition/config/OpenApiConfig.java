@@ -21,6 +21,8 @@ public class OpenApiConfig {
      * Creates a custom OpenAPI bean with security schemes and API information.
      *
      * @return an OpenAPI object configured with security schemes and API information
+     *
+     * @author: Mohamed Amine Eddafir
      */
     @Bean
     public OpenAPI customOpenAPI() {
@@ -39,8 +41,5 @@ public class OpenApiConfig {
                                 .name("Mohamed Amine Eddafir")
                                 .email("eddafir.mohamed.amine01@gmail.com")
                                 .url("https://github.com/mohamedAmineEddafir")));
-//                        .license(new License()
-//                                .name("AlbaridBank License")
-//                                .url("https://www.albaridbank.ma")));
     }
 }
