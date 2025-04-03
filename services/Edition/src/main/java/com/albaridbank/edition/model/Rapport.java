@@ -1,5 +1,6 @@
 package com.albaridbank.edition.model;
 
+    import com.albaridbank.edition.model.emuns.ReportType;
     import lombok.AllArgsConstructor;
     import lombok.Builder;
     import lombok.Data;
@@ -60,8 +61,9 @@ package com.albaridbank.edition.model;
          * The type of the report.
          * This field has a maximum length of 50 characters.
          */
+        @Enumerated(EnumType.STRING)
         @Column(name = "typerapport", length = 50)
-        private String typeRapport;
+        private ReportType typeRapport;
 
         /**
          * The date and time when the report was created.
