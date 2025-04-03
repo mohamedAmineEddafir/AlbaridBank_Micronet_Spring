@@ -1,6 +1,7 @@
 package com.albaridbank.edition.model;
 
     import lombok.AllArgsConstructor;
+    import lombok.Builder;
     import lombok.Data;
     import lombok.NoArgsConstructor;
 
@@ -8,6 +9,8 @@ package com.albaridbank.edition.model;
     import org.hibernate.annotations.JdbcTypeCode;
     import org.hibernate.type.SqlTypes;
 
+    import java.io.Serial;
+    import java.io.Serializable;
     import java.time.LocalDateTime;
     import java.util.HashSet;
     import java.util.Set;
@@ -24,7 +27,11 @@ package com.albaridbank.edition.model;
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Rapport {
+    @Builder
+    public class Rapport implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
 
         /**
          * The unique identifier for the report.

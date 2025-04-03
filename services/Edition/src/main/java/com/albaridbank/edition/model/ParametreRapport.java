@@ -7,6 +7,9 @@ import lombok.ToString;
 
 import jakarta.persistence.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * Entity class representing a report parameter.
  * This class is mapped to the "parametre_rapport" table in the database.
@@ -17,7 +20,10 @@ import jakarta.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParametreRapport {
+public class ParametreRapport implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * The unique identifier for the report parameter.
