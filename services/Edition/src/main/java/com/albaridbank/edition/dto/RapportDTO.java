@@ -1,5 +1,6 @@
 package com.albaridbank.edition.dto;
 
+import com.albaridbank.edition.model.emuns.ReportType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,9 +22,9 @@ public class RapportDTO {
     private Long id;
     private String titre;
     private String description;
-    private String typeRapport;  // RELEVE_COMPTE, ETAT_FINANCIER, TRANSACTION_SUMMARY, etc.
+    private ReportType typeRapport;
     private LocalDateTime dateCreation;
     private String nomFichier;
-    private String formatDisponible;  // "PDF", "EXCEL" ou "PDF,EXCEL"
+    private String formatSouhaite;  // "PDF", "EXCEL" ou "PDF,EXCEL"
     private List<ParametreRapportDTO> parametres;
 }
