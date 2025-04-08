@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Entity class representing a bank account.
  * This class is mapped to the "compte" table in the database.
- * Implements Serializable for object serialization.
+ * Implements Serializable for object serialization. Database_CCP
  */
 @Entity
 @Table(name = "compte", indexes = {
