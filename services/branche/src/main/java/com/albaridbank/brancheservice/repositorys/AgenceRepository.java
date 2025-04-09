@@ -2,12 +2,13 @@ package com.albaridbank.brancheservice.repositorys;
 
 import com.albaridbank.brancheservice.model.SgcRefAgence;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * Repository interface for managing {@link SgcRefAgence} entities.
  * Extends {@link JpaRepository} to provide CRUD operations and custom query methods.
  */
-public interface AgenceRepository extends JpaRepository<SgcRefAgence, String> {
+public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, JpaSpecificationExecutor<SgcRefAgence> {
 
     /**
      * Finds an {@link SgcRefAgence} entity by its codburpo '{@summary Code unique de l'agence}' (agency code).
