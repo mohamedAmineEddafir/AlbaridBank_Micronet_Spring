@@ -4,6 +4,9 @@ import com.albaridbank.brancheservice.model.SgcRefAgence;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Repository interface for managing {@link SgcRefAgence} entities.
  * Extends {@link JpaRepository} to provide CRUD operations and custom query methods.
@@ -16,7 +19,7 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
      * @param codburpo The agency code to search for.
      * @return The matching {@link SgcRefAgence} entity, or null if not found.
      */
-    SgcRefAgence findByCodburpo(String codburpo);
+    Optional<SgcRefAgence> findByCodburpo(String codburpo);
 
     /**
      * Finds an {@link SgcRefAgence} entity by its libelleBurpo '{@summary  Nom ou intitule de l'agence}' (agency name).
@@ -24,7 +27,7 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
      * @param libelleBurpo The agency name to search for.
      * @return The matching {@link SgcRefAgence} entity, or null if not found.
      */
-    SgcRefAgence findByLibelleBurpo(String libelleBurpo);
+    List<SgcRefAgence> findByLibelleBurpo(String libelleBurpo);
 
     /**
      * Finds an {@link SgcRefAgence} entity by its libelleZone '{@summary Zone géographique}' (zone name).
@@ -32,7 +35,7 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
      * @param libelleZone The zone name to search for.
      * @return The matching {@link SgcRefAgence} entity, or null if not found.
      */
-    SgcRefAgence findByLibelleZone(String libelleZone);
+    List<SgcRefAgence> findByLibelleZone(String libelleZone);
 
     /**
      * Finds an {@link SgcRefAgence} entity by its libelleGroupe '{@summary Groupe auquel elle appartient}' (group name).
@@ -40,7 +43,7 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
      * @param libelleGroupe The group name to search for.
      * @return The matching {@link SgcRefAgence} entity, or null if not found.
      */
-    SgcRefAgence findByLibelleGroupe(String libelleGroupe);
+    List<SgcRefAgence> findByLibelleGroupe(String libelleGroupe);
 
     /**
      * Finds an {@link SgcRefAgence} entity by its libelleLocalite '{@summary Ville ou localité}' (locality name).
@@ -48,5 +51,21 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
      * @param libelleLocalite The locality name to search for.
      * @return The matching {@link SgcRefAgence} entity, or null if not found.
      */
-    SgcRefAgence findByLibelleLocalite(String libelleLocalite);
+    List<SgcRefAgence> findByLibelleLocalite(String libelleLocalite);
+
+    /**
+     * Finds agencies by their status.
+     *
+     * @param statut The status to search for (e.g., 'A' for active)
+     * @return List of matching agencies
+     */
+    List<SgcRefAgence> findByStatut(String statut);
+
+    /**
+     * Counts the number of agencies by status.
+     *
+     * @param statut The status ('A' for active, 'I' for inactive, etc.)
+     * @return The count of agencies with the specified status
+     */
+    long countByStatut(String statut);
 }
