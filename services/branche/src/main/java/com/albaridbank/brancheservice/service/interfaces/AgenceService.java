@@ -90,15 +90,15 @@ public interface AgenceService {
      */
     List<BranchDTO> getBranchesByRegion(String region);
 
-    /**
+    /*
      * Recherche avancée d'agences avec pagination et critères multiples.
      * Utilise des specifications pour construire des requêtes dynamiques.
      *
      * @param searchParams Les paramètres de recherche (nom, statut, zone, région, etc.)
      * @param pageable Paramètres de pagination
      * @return Page des résultats de recherche
-     */
-    Page<BranchDTO> searchBranches(Map<String, String> searchParams, Pageable pageable);
+     * Page<BranchDTO> search _ Branches (Map<String, String> searchParams, Pageable pageable);
+     **/
 
     /**
      * Récupère une version simplifiée des agences pour les interfaces légères.
