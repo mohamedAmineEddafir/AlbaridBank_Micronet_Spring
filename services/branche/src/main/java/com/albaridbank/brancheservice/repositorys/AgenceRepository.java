@@ -54,6 +54,14 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
     List<SgcRefAgence> findByLibelleLocalite(String libelleLocalite);
 
     /**
+     * Finds an {@link SgcRefAgence} entity by its libelleRegion '{@summary Region}' (region name).
+     *
+     * @param libelleRegion The region name to search for.
+     * @return The matching {@link SgcRefAgence} entity, or null if not found.
+     */
+    List<SgcRefAgence> findByLibelleRegion(String libelleRegion);
+
+    /**
      * Finds agencies by their status.
      *
      * @param statut The status to search for (e.g., 'A' for active)
