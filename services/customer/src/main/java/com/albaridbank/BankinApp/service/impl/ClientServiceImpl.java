@@ -100,7 +100,7 @@ public class ClientServiceImpl implements ClientService {
             List<ClientDTO> clients = clientMapper.toDtoList(clientRepository.findByCodetati(status));
 
             if (clients.isEmpty()) {
-                log.info("No clients found with status: {}", status);
+                log.warn("No clients found with status: {}", status);
             }
 
             return clients;
