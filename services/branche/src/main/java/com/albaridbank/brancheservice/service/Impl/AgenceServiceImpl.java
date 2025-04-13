@@ -32,7 +32,9 @@ public class AgenceServiceImpl implements AgenceService {
 
     private final AgenceRepository agenceRepository;
     private final SRagenceToBranchMapper branchMapper;
-    private final AgenceService agenceService;
+
+    // Suppression de la dépendance circulaire - Ne pas injecter AgenceService dans son implémentation
+    // private final AgenceService agenceService;
 
     /**
      * Récupère toutes les agences avec pagination.
@@ -84,17 +86,6 @@ public class AgenceServiceImpl implements AgenceService {
     /**
      * Récupère les agences par statut.
      *
-     * @param status Le statut à rechercher
-     * @return Liste des agences correspondantes
-     */
-    @Override
-    public List<BranchDTO> getBranchesByStatus(String status) {
-        return List.of();
-    }
-
-    /**
-     * Récupère les agences par statut.
-     *
      * @param statut Le statut à rechercher
      * @return Liste des agences correspondantes
      * @throws RuntimeException si une erreur survient
@@ -104,13 +95,17 @@ public class AgenceServiceImpl implements AgenceService {
         log.info("Récupération des agences par statut: {}", statut);
         Objects.requireNonNull(statut, "Le statut ne peut pas être null");
         try {
-            List<BranchDTO> branches = agenceRepository.findByStatut(statut)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .toList();
+            List<BranchDTO> statuts = branchMapper.toDtoList(agenceRepository.findByStatut(statut));
 
-            log.info("Nombre d'agences trouvées avec le statut {}: {}", statut, branches.size());
-            return branches;
+            if (statuts.isEmpty()) {
+                log.warn("Aucune agence trouvée avec le statut: {}", statut);
+                throw new EntityNotFoundException("Aucune agence trouvée avec le statut: " + statut);
+            }
+
+            return statuts;
+        } catch (EntityNotFoundException ex) {
+            // Ne pas encapsuler EntityNotFoundException dans RuntimeException
+            throw ex;
         } catch (Exception ex) {
             log.error("Erreur lors de la récupération des agences par statut {}: {}", statut, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la récupération des agences par statut", ex);
@@ -126,7 +121,23 @@ public class AgenceServiceImpl implements AgenceService {
      */
     @Override
     public List<BranchDTO> getBranchesBystatutAndRegion(String statut, String region) {
-        return List.of();
+        log.info("Récupération des agences par statut: {} et région: {}", statut, region);
+        Objects.requireNonNull(statut, "Le statut ne peut pas être null");
+        Objects.requireNonNull(region, "La région ne peut pas être null");
+        try {
+            // Implémentation à fournir pour l'instant c'est vide
+            List<BranchDTO> stRegion = branchMapper.toDtoList(agenceRepository.findByStatutAndLibelleRegion(statut, region));
+
+            if (stRegion.isEmpty()) {
+                log.warn("Aucune agence trouvée avec le statut {} et la région {}", statut, region);
+                throw new EntityNotFoundException("Aucune agence trouvée avec le statut " + statut + " et la région " + region);
+            }
+
+            return stRegion;
+        } catch (Exception ex) {
+            log.error("Erreur lors de la récupération des agences par statut {} et région {}: {}", statut, region, ex.getMessage(), ex);
+            throw new RuntimeException("Échec de la récupération des agences par statut et région", ex);
+        }
     }
 
     /**
@@ -142,13 +153,17 @@ public class AgenceServiceImpl implements AgenceService {
         Objects.requireNonNull(statut, "Le statut ne peut pas être null");
         Objects.requireNonNull(groupe, "Le groupe ne peut pas être null");
         try {
-            List<BranchDTO> branches = agenceRepository.findByStatutAndGroupe(statut, groupe)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .toList();
+            List<BranchDTO> stGroup = branchMapper.toDtoList(agenceRepository.findByStatutAndLibelleGroupe(statut, groupe));
 
-            log.info("Nombre d'agences trouvées avec le statut {} et le groupe {}: {}", statut, groupe, branches.size());
-            return branches;
+            if (stGroup.isEmpty()) {
+                log.warn("Aucune agence trouvée avec le statut {} et le groupe {}", statut, groupe);
+                throw new EntityNotFoundException("Aucune agence trouvée avec le statut " + statut + " et le groupe " + groupe);
+            }
+
+            return stGroup;
+        } catch (EntityNotFoundException ex) {
+            // Ne pas encapsuler EntityNotFoundException dans RuntimeException
+            throw ex;
         } catch (Exception ex) {
             log.error("Erreur lors de la récupération des agences par statut {} et groupe {}: {}", statut, groupe, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la récupération des agences par statut et groupe", ex);
@@ -167,16 +182,20 @@ public class AgenceServiceImpl implements AgenceService {
         log.info("Recherche des agences par nom: {}", nomAgence);
         Objects.requireNonNull(nomAgence, "Le nom d'agence ne peut pas être null");
         try {
-            // Pour la recherche partielle, vous pourriez avoir besoin d'une méthode dédiée dans le repository
-            // Si vous n'avez pas de méthode findByLibelleBurpo Containing, utilisez findByLibelleBurpo.
-            List<BranchDTO> branches = agenceRepository.findByLibelleBurpo(nomAgence)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .filter(branch -> branch.getNomAgence().contains(nomAgence))
-                    .toList();
+            // Utilisation d'une méthode de recherche partielle si disponible.
+            // Vous devriez ajouter une méthode dans le repository comme findByLibelleBurpoContainingIgnoreCase
+            // Pour l'instant, je garde votre approche actuelle
+            List<BranchDTO> brName = branchMapper.toDtoList(agenceRepository.findByLibelleBurpo(nomAgence));
 
-            log.info("Nombre d'agences trouvées avec le nom contenant {}: {}", nomAgence, branches.size());
-            return branches;
+            if (brName.isEmpty()) {
+                log.warn("Aucune agence trouvée avec le nom contenant: {}", nomAgence);
+                throw new EntityNotFoundException("Aucune agence trouvée avec le nom contenant: " + nomAgence);
+            }
+
+            return brName;
+        } catch (EntityNotFoundException ex) {
+            // Ne pas encapsuler EntityNotFoundException dans RuntimeException
+            throw ex;
         } catch (Exception ex) {
             log.error("Erreur lors de la recherche des agences par nom {}: {}", nomAgence, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la recherche des agences par nom", ex);
@@ -195,13 +214,10 @@ public class AgenceServiceImpl implements AgenceService {
         log.info("Récupération des agences par zone: {}", zone);
         Objects.requireNonNull(zone, "La zone ne peut pas être null");
         try {
-            List<BranchDTO> branches = agenceRepository.findByLibelleZone(zone)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .toList();
+            List<BranchDTO> brZone = branchMapper.toDtoList(agenceRepository.findByLibelleZone(zone));
 
-            log.info("Nombre d'agences trouvées dans la zone {}: {}", zone, branches.size());
-            return branches;
+            log.info("Nombre d'agences trouvées dans la zone {}: {}", zone, brZone.size());
+            return brZone;
         } catch (Exception ex) {
             log.error("Erreur lors de la récupération des agences par zone {}: {}", zone, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la récupération des agences par zone", ex);
@@ -220,13 +236,15 @@ public class AgenceServiceImpl implements AgenceService {
         log.info("Récupération des agences par groupe: {}", groupe);
         Objects.requireNonNull(groupe, "Le groupe ne peut pas être null");
         try {
-            List<BranchDTO> branches = agenceRepository.findByLibelleGroupe(groupe)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .toList();
+            List<BranchDTO> brGroup = branchMapper.toDtoList(agenceRepository.findByLibelleGroupe(groupe));
 
-            log.info("Nombre d'agences trouvées dans le groupe {}: {}", groupe, branches.size());
-            return branches;
+            if (brGroup.isEmpty()) {
+                log.warn("Aucune agence trouvée dans le groupe: {}", groupe);
+                throw new EntityNotFoundException("Aucune agence trouvée dans le groupe: " + groupe);
+            }
+
+            log.info("Nombre d'agences trouvées dans le groupe {}: {}", groupe, brGroup.size());
+            return brGroup;
         } catch (Exception ex) {
             log.error("Erreur lors de la récupération des agences par groupe {}: {}", groupe, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la récupération des agences par groupe", ex);
@@ -245,13 +263,15 @@ public class AgenceServiceImpl implements AgenceService {
         log.info("Récupération des agences par localité: {}", localite);
         Objects.requireNonNull(localite, "La localité ne peut pas être null");
         try {
-            List<BranchDTO> branches = agenceRepository.findByLibelleLocalite(localite)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .toList();
+            List<BranchDTO> brLocalite = branchMapper.toDtoList(agenceRepository.findByLibelleLocalite(localite));
 
-            log.info("Nombre d'agences trouvées dans la localité {}: {}", localite, branches.size());
-            return branches;
+            if (brLocalite.isEmpty()) {
+                log.warn("Aucune agence trouvée dans la localité: {}", localite);
+                throw new EntityNotFoundException("Aucune agence trouvée dans la localité: " + localite);
+            }
+
+            log.info("Nombre d'agences trouvées dans la localité {}: {}", localite, brLocalite.size());
+            return brLocalite;
         } catch (Exception ex) {
             log.error("Erreur lors de la récupération des agences par localité {}: {}", localite, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la récupération des agences par localité", ex);
@@ -270,13 +290,15 @@ public class AgenceServiceImpl implements AgenceService {
         log.info("Récupération des agences par région: {}", region);
         Objects.requireNonNull(region, "La région ne peut pas être null");
         try {
-            List<BranchDTO> branches = agenceRepository.findByLibelleRegion(region)
-                    .stream()
-                    .map(branchMapper::toDto)
-                    .toList();
+            List<BranchDTO> brRegion = branchMapper.toDtoList(agenceRepository.findByLibelleRegion(region));
 
-            log.info("Nombre d'agences trouvées dans la région {}: {}", region, branches.size());
-            return branches;
+            if (brRegion.isEmpty()) {
+                log.warn("Aucune agence trouvée dans la région: {}", region);
+                throw new EntityNotFoundException("Aucune agence trouvée dans la région: " + region);
+            }
+
+            log.info("Nombre d'agences trouvées dans la région {}: {}", region, brRegion.size());
+            return brRegion;
         } catch (Exception ex) {
             log.error("Erreur lors de la récupération des agences par région {}: {}", region, ex.getMessage(), ex);
             throw new RuntimeException("Échec de la récupération des agences par région", ex);
