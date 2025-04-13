@@ -64,15 +64,24 @@ public interface AgenceRepository extends JpaRepository<SgcRefAgence, String>, J
     /**
      * Finds agencies by their status.
      *
-     * @param statut The status to search for (e.g., 'A' for active)
+     * @param statut The status to search for (e.g., 'O' for Ouvrir)
      * @return List of matching agencies
      */
     List<SgcRefAgence> findByStatut(String statut);
 
     /**
+     * Finds agencies by their status and group.
+     *
+     * @param statut The status to search for (e.g., 'O' for Ouvrir)
+     * @param groupe The group to search for
+     * @return List of matching agencies
+     */
+    List<SgcRefAgence> findByStatutAndGroupe(String statut, String groupe);
+
+    /**
      * Counts the number of agencies by status.
      *
-     * @param statut The status ('A' for active, 'I' for inactive, etc.)
+     * @param statut The status ('O' for Ouvrir , 'F' for Fermer , etc.)
      * @return The count of agencies with the specified status
      */
     long countByStatut(String statut);
