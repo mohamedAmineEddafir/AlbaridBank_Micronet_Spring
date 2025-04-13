@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Service interface for managing branch/agency data.
@@ -33,14 +32,6 @@ public interface AgenceService {
      * @return L'agence correspondante
      */
     BranchDTO getBranchById(String codeAgence);
-
-    /**
-     * Récupère une agence par son code avec gestion Optional.
-     *
-     * @param codeAgence Le code de l'agence
-     * @return Optional contenant l'agence si trouvée
-     */
-    Optional<BranchDTO> findBranchById(String codeAgence);
 
     /**
      * Récupère les agences par statut.
@@ -101,12 +92,35 @@ public interface AgenceService {
      **/
 
     /**
+     * Récupère les agences par statut.
+     * @param statut Le statut à rechercher
+     * @return Liste des agences correspondantes basée sur le statut
+     */
+    List<BranchDTO> getBranchesBystatut(String statut);
+
+    /**
+     * Récupère les agences par statut et région.
+     * @param statut Le statut à rechercher
+     * @param region La région à rechercher
+     * @return Liste des agences correspondantes basée sur le statut et la région
+     */
+    List<BranchDTO> getBranchesBystatutAndRegion(String statut, String region);
+
+    /**
+     * Récupère les agences par statut et groupe.
+     *
+     * @param statut Le statut à rechercher
+     * @param groupe Le groupe à rechercher
+     * @return Liste des agences correspondantes
+     */
+    List<BranchDTO> getBranchesBystatutAndGroupe(String statut, String groupe);
+    /**
      * Récupère une version simplifiée des agences pour les interfaces légères.
      * Contient uniquement les informations essentielles (code, nom, région, statut).
      *
      * @return Liste des agences en format simplifié
      */
-    List<BranchSimpleDTO> getAllBranchesSimple();
+    Page<BranchSimpleDTO> getAllBranchesSimple(Pageable pageable);
 
     /**
      * Récupère des statistiques sur les agences.
