@@ -24,33 +24,32 @@ public interface SRagenceToBranchMapper {
     /**
      * Converts a {@link SgcRefAgence} entity to a {@link BranchDTO}.
      *
-     * @param entity The source entity object
+     * @param branch The source entity object
      * @return The mapped DTO
      */
     @Mapping(source = "codburpo", target = "codeAgence")
     @Mapping(source = "libelleBurpo", target = "nomAgence")
     @Mapping(source = "typbur", target = "typeAgence")
-    @Mapping(source = "libreg", target = "region")
+    @Mapping(source = "libelleRegion", target = "region")
     @Mapping(source = "codreg", target = "codeRegion")
     @Mapping(source = "libelleZone", target = "zone")
     @Mapping(source = "libelleGroupe", target = "groupe")
     @Mapping(source = "libelleLocalite", target = "localite")
     @Mapping(source = "catagence", target = "catAgence")
     @Mapping(source = "datedeploiement", target = "dateDeploiement")
-    @Mapping(source = "adeployer", target = "aDeployer")
     @Mapping(source = "typeconnexion", target = "typeConnexion")
     @Mapping(source = "codepostale", target = "codePostal")
     @Mapping(source = "telephoneFixe", target = "telephoneFixe")
     @Mapping(source = "telephoneMobile", target = "telephoneMobile")
-    BranchDTO toDto(SgcRefAgence entity);
+    BranchDTO toDto(SgcRefAgence branch);
 
     /**
      * Converts a list of {@link SgcRefAgence} entities to a list of {@link BranchDTO}.
      *
-     * @param entities The source entity list
+     * @param branches The source entity list
      * @return The mapped DTO list
      */
-    List<BranchDTO> toDtoList(List<SgcRefAgence> entities);
+    List<BranchDTO> toDtoList(List<SgcRefAgence> branches);
 
     /**
      * Converts a {@link SgcRefAgence} entity to a {@link BranchSimpleDTO} for simplified data transfer.
@@ -60,17 +59,17 @@ public interface SRagenceToBranchMapper {
      */
     @Mapping(source = "codburpo", target = "codeAgence")
     @Mapping(source = "libelleBurpo", target = "nomAgence")
-    @Mapping(source = "libreg", target = "region")
+    @Mapping(source = "libelleRegion", target = "region")
     @Mapping(source = "telephoneFixe", target = "telephone")
     BranchSimpleDTO toSimpleDto(SgcRefAgence entity);
 
     /**
      * Converts a list of {@link SgcRefAgence} entities to a list of {@link BranchSimpleDTO}.
      *
-     * @param entities The source entity list
+     * @param simpleBranches The source entity list
      * @return The mapped simplified DTO list
      */
-    List<BranchSimpleDTO> toSimpleDtoList(List<SgcRefAgence> entities);
+    List<BranchSimpleDTO> toSimpleDtoList(List<SgcRefAgence> simpleBranches);
 
     /**
      * Converts a {@link BranchDTO} to a {@link SgcRefAgence} entity.
