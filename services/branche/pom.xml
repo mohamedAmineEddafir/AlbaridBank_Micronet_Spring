@@ -75,7 +75,7 @@
 			<artifactId>flyway-core</artifactId>
 		</dependency>
 
-		<!-- Flyway PostgreSQL - nécessaire pour PostgreSQL 17 -->
+		<!-- Flyway PostgreSQL nécessaire pour PostgreSQL 17 -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-database-postgresql</artifactId>
