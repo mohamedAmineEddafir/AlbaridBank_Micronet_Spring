@@ -50,8 +50,6 @@ customer-service:
 
 server:
   port: 8092
-  servlet:
-    context-path: /api/branche
 
 # http://localhost:8092/api/branche/swagger-ui.html
 # http://localhost:8092/api/branche/api-docs
