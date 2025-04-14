@@ -46,7 +46,7 @@ public class SgcRefAgence implements Serializable {
      * The region name of the branch.
      */
     @Column(name = "libreg", length = 200)
-    private String libreg;
+    private String libelleRegion;
 
     /**
      * The type of branch.
