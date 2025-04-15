@@ -16,9 +16,8 @@ public class BranchDTO {
     private String codeAgence;            // codburpo
     private String nomAgence;             // libelleBurpo
     private String typeAgence;            // typbur
-    private String region;                // libreg
+    private String region;                // libreg - libelleRegion
     private Integer codeRegion;           // codreg
-    private String zone;                  // libelleZone
     private String groupe;                // libelleGroupe
     private String localite;              // libelleLocalite
     private String categorie;             // categorie
