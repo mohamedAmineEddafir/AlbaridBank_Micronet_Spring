@@ -32,7 +32,6 @@ public interface SRagenceToBranchMapper {
     @Mapping(source = "typbur", target = "typeAgence")
     @Mapping(source = "libelleRegion", target = "region")
     @Mapping(source = "codreg", target = "codeRegion")
-    @Mapping(source = "libelleZone", target = "zone")
     @Mapping(source = "libelleGroupe", target = "groupe")
     @Mapping(source = "libelleLocalite", target = "localite")
     @Mapping(source = "catagence", target = "catAgence")
