@@ -36,10 +36,10 @@ public interface AgenceService {
     /**
      * Récupère les agences par statut.
      *
-     * @param status Le statut à rechercher
-     * @return Liste des agences correspondantes
+     * @param statut Le statut à rechercher
+     * @return Liste des agences correspondantes basée sur le statut
      */
-    List<BranchDTO> getBranchesByStatus(String status);
+    Page<BranchDTO> getBranchesBystatut(Pageable pageable, String statut);
 
     /**
      * Recherche des agences par nom (recherche partielle).
@@ -49,29 +49,25 @@ public interface AgenceService {
      */
     List<BranchDTO> searchBranchesByName(String nomAgence);
 
-    /**
-     * Récupère les agences par zone.
-     *
-     * @param zone La zone à rechercher
-     * @return Liste des agences correspondantes
-     */
-    List<BranchDTO> getBranchesByZone(String zone);
-
-    /**
+    /*
      * Récupère les agences par groupe.
      *
      * @param groupe Le groupe à rechercher
      * @return Liste des agences correspondantes
-     */
+     /*
+
     List<BranchDTO> getBranchesByGroupe(String groupe);
 
-    /**
+    */
+    /*
      * Récupère les agences par localité.
      *
      * @param localite La localité à rechercher
      * @return Liste des agences correspondantes
-     */
+     /*
+
     List<BranchDTO> getBranchesByLocalite(String localite);
+    */
 
     /**
      * Récupère les agences par région.
@@ -92,14 +88,8 @@ public interface AgenceService {
      **/
 
     /**
-     * Récupère les agences par statut.
-     * @param statut Le statut à rechercher
-     * @return Liste des agences correspondantes basée sur le statut
-     */
-    List<BranchDTO> getBranchesBystatut(String statut);
-
-    /**
      * Récupère les agences par statut et région.
+     *
      * @param statut Le statut à rechercher
      * @param region La région à rechercher
      * @return Liste des agences correspondantes basée sur le statut et la région
@@ -107,20 +97,20 @@ public interface AgenceService {
     List<BranchDTO> getBranchesBystatutAndRegion(String statut, String region);
 
     /**
-     * Récupère les agences par statut et groupe.
-     *
-     * @param statut Le statut à rechercher
-     * @param groupe Le groupe à rechercher
-     * @return Liste des agences correspondantes
-     */
-    List<BranchDTO> getBranchesBystatutAndGroupe(String statut, String groupe);
-    /**
      * Récupère une version simplifiée des agences pour les interfaces légères.
      * Contient uniquement les informations essentielles (code, nom, région, statut).
      *
      * @return Liste des agences en format simplifié
      */
     Page<BranchSimpleDTO> getAllBranchesSimple(Pageable pageable);
+
+    /**
+     * Récupère une version simplifiée d'une agence par son code.
+     *
+     * @param codeAgence Le code de l'agence
+     * @return L'agence correspondante en format simplifié
+     */
+    BranchSimpleDTO getSimpleInfoBranchById(String codeAgence);
 
     /**
      * Récupère des statistiques sur les agences.
