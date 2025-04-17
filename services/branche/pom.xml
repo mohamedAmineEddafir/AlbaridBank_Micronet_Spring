@@ -31,7 +31,7 @@
 		<spring-cloud.version>2024.0.0</spring-cloud.version>
 		<org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
 		<org.springframework.boot.actuator.vertion>3.4.3</org.springframework.boot.actuator.vertion>
-		<springdoc.version>2.3.0</springdoc.version>
+		<springdoc.version>2.5.0</springdoc.version>
 		<apache.poi.version>5.2.5</apache.poi.version>
 	</properties>
 	<dependencies>
