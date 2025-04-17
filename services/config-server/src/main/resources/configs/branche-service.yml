@@ -42,6 +42,9 @@ logging:
     com.albaridbank: DEBUG
     org.springframework: INFO
     org.hibernate: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type: TRACE
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.hibernate.SQL: DEBUG
 
 # Configuration pour les clients Feign
