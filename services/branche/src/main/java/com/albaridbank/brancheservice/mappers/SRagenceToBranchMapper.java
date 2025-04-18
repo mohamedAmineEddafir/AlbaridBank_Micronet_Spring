@@ -36,6 +36,7 @@ public interface SRagenceToBranchMapper {
     @Mapping(source = "libelleLocalite", target = "localite")
     @Mapping(source = "catagence", target = "catAgence")
     @Mapping(source = "datedeploiement", target = "dateDeploiement")
+    @Mapping(source = "adeployer", target = "aDeployer")
     @Mapping(source = "typeconnexion", target = "typeConnexion")
     @Mapping(source = "codepostale", target = "codePostal")
     @Mapping(source = "telephoneFixe", target = "telephoneFixe")

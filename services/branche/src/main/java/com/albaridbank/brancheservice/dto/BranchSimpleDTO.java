@@ -28,6 +28,6 @@ public class BranchSimpleDTO {
     @Schema(description = "Full street address of the branch.", example = "123 Avenue Mohammed V, Rabat")
     private String adresse;       // adresse
 
-    @Schema(description = "Primary contact phone number (fixed or mobile).", example = "0537-XX-XX-XX")
+    @Schema(description = "Primary contact phone number (fixed).", example = "0537-XX-XX-XX")
     private String telephone;     // telephone_fixe ou mobile
 }
