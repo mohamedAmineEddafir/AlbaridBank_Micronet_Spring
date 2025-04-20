@@ -71,13 +71,13 @@ public interface SRagenceToBranchMapper {
      */
     List<BranchSimpleDTO> toSimpleDtoList(List<SgcRefAgence> simpleBranches);
 
-    /**
+    /*
      * Converts a {@link BranchDTO} to a {@link SgcRefAgence} entity.
      *
      * @param dto The source DTO object
      * @return The mapped entity
-     */
-    @InheritInverseConfiguration(name = "toDto")
+     **/
+    //@InheritInverseConfiguration(name = "toDto")
     //@Mapping(target = "id", ignore = true) // cette ligne si mon entité a un ID généré automatiquement
-    SgcRefAgence toEntity(BranchDTO dto);
+    //SgcRefAgence toEntity(BranchDTO dto);
 }
