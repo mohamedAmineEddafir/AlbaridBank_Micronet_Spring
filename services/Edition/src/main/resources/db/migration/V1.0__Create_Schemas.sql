@@ -1,0 +1,2 @@
+-- Création du schéma si nécessaire (facultatif pour PostgreSQL)
+-- CREATE SCHEMA IF NOT EXISTS public;
