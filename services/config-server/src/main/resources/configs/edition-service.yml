@@ -8,6 +8,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # Important pour les noms camelCase
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -17,6 +19,8 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        globally_quoted_identifiers: true # Active les guillemets pour tous les identifiants
+
   flyway: # is to manage the database schema in a structured and organized way
     baseline-on-migrate: true
     enabled: true
@@ -25,6 +29,11 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     locations: classpath:db/migration
+    schemas: public
+    out-of-order: false
+    validate-on-migrate: true
+    placeholders:
+      schema_name: public
 
 # Configuration SpringDoc/Swagger
 springdoc:
@@ -50,6 +59,7 @@ logging:
     org.springframework: INFO
     org.hibernate: INFO
     org.hibernate.SQL: DEBUG
+    org.flywaydb: INFO  # pour mieux suivre les migrations Flyway
 
 # Configuration pour les clients Feign
 customer-service:
