@@ -18,7 +18,7 @@ import java.util.List;
  * It contains information about the client such as ID, category, and personal details.
  */
 @Entity
-@Table(name = "clientCEN")
+@Table(name = "\"clientCEN\"")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
