@@ -10,9 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-// The table name is escaped with double quotes to preserve case sensitivity and special characters.
-// This is necessary for databases like PostgreSQL that treat unquoted table names as lowercase by default.
-@Table(name = "\"mvtFinancierCCP\"")
+@Table(name = "\"mvtFinancierCCP\"") // PostgreSQL requires double quotes for case sensitivity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,8 +42,9 @@ public class MvtFinancierCCP {
     @Column(name = "solddepa")
     private BigDecimal soldeDepartCompte;
 
-    @Column(name = "codburpo")
-    private Long codeBureauPoste;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "codburpo")
+    private BureauPosteCCP bureauPoste;
 
     @Column(name = "numeordr")
     private Long numeroOrdre;
