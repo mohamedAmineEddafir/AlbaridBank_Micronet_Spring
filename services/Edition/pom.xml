@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -30,7 +30,7 @@
 		<java.version>21</java.version>
 		<spring-cloud.version>2024.0.0</spring-cloud.version>
 		<org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
-		<org.springframework.boot.actuator.vertion>3.4.3</org.springframework.boot.actuator.vertion>
+		<org.springframework.boot.actuator.version>3.4.3</org.springframework.boot.actuator.version>
 		<springdoc.version>2.3.0</springdoc.version>
 		<apache.poi.version>5.2.5</apache.poi.version>
 	</properties>
@@ -63,7 +63,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -74,7 +73,6 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
-
 		<!-- Flyway PostgreSQL - nécessaire pour PostgreSQL 17 -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -97,11 +95,10 @@
 			<version>0.2.0</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${org.springframework.boot.actuator.vertion}</version>
+			<version>${org.springframework.boot.actuator.version}</version>
 		</dependency>
 		<!-- SpringDoc OpenAPI UI - compatible avec Spring Boot 3.x -->
 		<dependency>
@@ -109,7 +106,6 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
-
 		<!-- Apache POI pour Excel -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -121,7 +117,6 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${apache.poi.version}</version>
 		</dependency>
-
 		<!-- Spring Cloud OpenFeign pour communication entre services -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -140,7 +135,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -177,5 +171,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
