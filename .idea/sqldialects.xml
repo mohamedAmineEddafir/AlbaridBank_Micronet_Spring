@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V1.0__Create_Schemas.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V1.1__Create_Tables_CCP.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V1.2__Create_Tables_CEN.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V1.3__Add_Foreign_Keys.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V1__Create_Schemas.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V2__Create_Tables_CCP.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V3__Create_Tables_CEN.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V4__Add_Foreign_Keys.sql" dialect="PostgreSQL" />
   </component>
 </project>
