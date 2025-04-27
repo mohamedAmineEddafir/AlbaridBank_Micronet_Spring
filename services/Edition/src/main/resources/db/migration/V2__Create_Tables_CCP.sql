@@ -1,7 +1,7 @@
--- V1.1__Create_Tables_CCP.sql
+-- V2__Create_Tables_CCP.sql
 
 -- Type d'opération CCP
-CREATE TABLE IF NOT EXISTS "typeOperationCCP"
+CREATE TABLE IF NOT EXISTS typeOperationCCP
 (
     codtypop NUMERIC(4, 0) NOT NULL,
     libtypop VARCHAR(80),
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "typeOperationCCP"
 );
 
 -- Catégorie socio-professionnelle CCP
-CREATE TABLE IF NOT EXISTS "catSocioProfCCP"
+CREATE TABLE IF NOT EXISTS catSocioProfCCP
 (
     codsocpr NUMERIC(3, 0) NOT NULL,
     libsocpr VARCHAR(40),
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS "catSocioProfCCP"
 );
 
 -- Bureau poste CCP
-CREATE TABLE IF NOT EXISTS "bureauPosteCCP"
+CREATE TABLE IF NOT EXISTS bureauPosteCCP
 (
     codburpo NUMERIC(5, 0) NOT NULL,
     desburpo VARCHAR(60),
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS "bureauPosteCCP"
 );
 
 -- Client CCP
-CREATE TABLE IF NOT EXISTS "clientCCP"
+CREATE TABLE IF NOT EXISTS clientCCP
 (
     idenclie  NUMERIC(8, 0) NOT NULL,
     codsocpr  NUMERIC(3, 0),
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS "clientCCP"
 );
 
 -- Compte CCP
-CREATE TABLE IF NOT EXISTS "compteCCP"
+CREATE TABLE IF NOT EXISTS compteCCP
 (
     idencomp NUMERIC(12, 0) NOT NULL,
     codcatcp NUMERIC(2, 0),
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS "compteCCP"
 );
 
 -- Mouvements financiers CCP
-CREATE TABLE IF NOT EXISTS "mvtFinancierCCP"
+CREATE TABLE IF NOT EXISTS mvtFinancierCCP
 (
     cptemouv     NUMERIC(12, 0) NOT NULL,
     datemouv     DATE           NOT NULL,

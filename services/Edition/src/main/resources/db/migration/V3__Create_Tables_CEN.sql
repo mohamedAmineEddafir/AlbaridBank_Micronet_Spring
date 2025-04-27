@@ -1,9 +1,9 @@
--- V1.2__Create_Tables_CEN.sql
+-- V3__Create_Tables_CEN.sql
 
 -- Type d'opération CEN
-CREATE TABLE IF NOT EXISTS "typeOperCEN"
+CREATE TABLE IF NOT EXISTS typeOperCEN
 (
-    codtypop  NUMERIC(4),
+    codtypop  NUMERIC(4) NOT NULL,
     libtypop  VARCHAR(60),
     natuoper  CHAR(1),
     compordr  NUMERIC(8),
@@ -23,11 +23,12 @@ CREATE TABLE IF NOT EXISTS "typeOperCEN"
     codearti  NUMERIC(3),
     cpteordr  NUMERIC(12),
     caisagen  VARCHAR(1),
-    menimpliv VARCHAR(42)
+    menimpliv VARCHAR(42),
+    PRIMARY KEY (codtypop)
 );
 
 -- Catégorie socio-professionnelle CEN
-CREATE TABLE IF NOT EXISTS "catSociProfCEN"
+CREATE TABLE IF NOT EXISTS catSociProfCEN
 (
     cocasopr NUMERIC(3) NOT NULL,
     licasopr VARCHAR(60),
@@ -36,7 +37,7 @@ CREATE TABLE IF NOT EXISTS "catSociProfCEN"
 );
 
 -- Bureau poste CEN
-CREATE TABLE IF NOT EXISTS "burePostCEN"
+CREATE TABLE IF NOT EXISTS burePostCEN
 (
     codburpo NUMERIC(5, 0) NOT NULL,
     cobupodo NUMERIC(5),
@@ -59,9 +60,8 @@ CREATE TABLE IF NOT EXISTS "burePostCEN"
     etaburpo CHAR(1),
     PRIMARY KEY (codburpo)
 );
-
 -- Client CEN
-CREATE TABLE IF NOT EXISTS "clientCEN"
+CREATE TABLE IF NOT EXISTS clientCEN
 (
     idenclie  NUMERIC(8) NOT NULL,
     codcatcl  NUMERIC(2),
@@ -88,9 +88,8 @@ CREATE TABLE IF NOT EXISTS "clientCEN"
     ordogmaj  NUMERIC(6, 0),
     PRIMARY KEY (idenclie)
 );
-
 -- Compte CEN
-CREATE TABLE IF NOT EXISTS "compteCEN"
+CREATE TABLE IF NOT EXISTS compteCEN
 (
     codeprod NUMERIC(2) NOT NULL,
     idencomp NUMERIC(8) NOT NULL,
@@ -134,9 +133,8 @@ CREATE TABLE IF NOT EXISTS "compteCEN"
     datderoc DATE,
     PRIMARY KEY (codeprod, idencomp)
 );
-
 -- Opérations comptables CEN
-CREATE TABLE IF NOT EXISTS "operCompCEN"
+CREATE TABLE IF NOT EXISTS operCompCEN
 (
     dateoper    DATE       NOT NULL,
     codburpo    NUMERIC(5) NOT NULL,
@@ -186,35 +184,4 @@ CREATE TABLE IF NOT EXISTS "operCompCEN"
     soldepadebi NUMERIC(14, 2) DEFAULT 0.00,
     soldepacred NUMERIC(14, 2),
     PRIMARY KEY (dateoper, codburpo, numeordr)
-);
-
--- Tables supplémentaires du microservice Edition
-CREATE TABLE IF NOT EXISTS "rapport"
-(
-    id           SERIAL PRIMARY KEY,
-    titre        VARCHAR(100) NOT NULL,
-    description  TEXT,
-    typerapport  VARCHAR(50)  NOT NULL,
-    dateCreation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS "parametreRapport"
-(
-    id        SERIAL PRIMARY KEY,
-    idRapport INTEGER     NOT NULL REFERENCES "rapport" (id),
-    nom       VARCHAR(50) NOT NULL,
-    valeur    TEXT,
-    type      VARCHAR(30)
-);
-
-CREATE TABLE IF NOT EXISTS "clientCCP100"
-(
-    idencomp NUMERIC(12, 0) NOT NULL,
-    inticomp VARCHAR(120),
-    adrecomp VARCHAR(120),
-    libsocpr VARCHAR(40),
-    codburpo NUMERIC(5, 0),
-    desburpo VARCHAR(60),
-    libesrp  VARCHAR(60),
-    soldcour NUMERIC(14, 2)
 );
