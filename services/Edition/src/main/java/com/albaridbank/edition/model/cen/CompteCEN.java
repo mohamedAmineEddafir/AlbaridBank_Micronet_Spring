@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "\"compteCEN\"")
+@Table(name = "compteCEN")
 @IdClass(CompteCENId.class) // Classe ID composée
 @Data
 @NoArgsConstructor
