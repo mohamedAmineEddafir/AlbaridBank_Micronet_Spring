@@ -12,7 +12,7 @@ import jakarta.persistence.*;
  * It contains information about the operation type such as code and label.
  */
 @Entity
-@Table(name = "typeOperCEN")
+@Table(name = "typeopercen")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "mvtFinancierCCP") // PostgreSQL requires double quotes for case sensitivity
+@Table(name = "mvtFinancierccp") // PostgreSQL requires double quotes for case sensitivity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

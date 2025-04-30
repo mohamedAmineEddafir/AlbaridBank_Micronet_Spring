@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "typeOperationCCP")
+@Table(name = "typeoperationccp")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * It contains information about the operation such as date, amount, office code, product codes, credit and debit accounts, category code, status code, and type of operation.
  */
 @Entity
-@Table(name = "operCompCEN")
+@Table(name = "opercompcen")
 @IdClass(OperCompCENId.class)
 @Data
 @NoArgsConstructor
