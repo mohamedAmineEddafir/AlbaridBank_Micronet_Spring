@@ -1,9 +1,9 @@
 -- V4__Add_Foreign_Keys.sql
 
--- Relations pour les tables CCP
-ALTER TABLE bureauPosteCCP
-    ADD CONSTRAINT fk_bureau_poste_parent
-        FOREIGN KEY (cobupora) REFERENCES bureauPosteCCP (codburpo);
+-- -- Relations pour les tables CCP
+-- ALTER TABLE bureauPosteCCP
+--     ADD CONSTRAINT fk_bureau_poste_parent
+--         FOREIGN KEY (cobupora) REFERENCES bureauPosteCCP (codburpo);
 
 ALTER TABLE clientCCP
     ADD CONSTRAINT fk_client_ccp_socio_prof
@@ -25,10 +25,10 @@ ALTER TABLE mvtFinancierCCP
     ADD CONSTRAINT fk_mvt_ccp_type_op
         FOREIGN KEY (codtypop) REFERENCES typeOperationCCP (codtypop);
 
--- Relations pour les tables CEN
-ALTER TABLE burePostCEN
-    ADD CONSTRAINT fk_bureau_post_cen_parent
-        FOREIGN KEY (cobupora) REFERENCES burePostCEN (codburpo);
+-- -- Relations pour les tables CEN
+-- ALTER TABLE burePostCEN
+--     ADD CONSTRAINT fk_bureau_post_cen_parent
+--         FOREIGN KEY (cobupora) REFERENCES burePostCEN (codburpo);
 
 ALTER TABLE clientCEN
     ADD CONSTRAINT fk_client_cen_socio_prof
