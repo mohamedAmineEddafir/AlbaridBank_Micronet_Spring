@@ -19,7 +19,7 @@ public interface RapportCCPMapper {
 
     @Mapping(target = "titreRapport", expression = "java(\"ETAT COMPTES MOUVEMENTEES \" + (joursAvant == 1 ? \"VEILLE\" : \"AVANT VEILLE\"))")
     @Mapping(target = "dateEdition", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "numeroPage", constant = "1")
+    @Mapping(target = "numeroPage", constant = "0")
     @Mapping(target = "journeeDu", source = "dateRapport")
     @Mapping(target = "codeAgence", source = "codeBureau")
     @Mapping(target = "nomAgence", source = "desBureau")
@@ -51,8 +51,7 @@ public interface RapportCCPMapper {
             BigDecimal totalEncours);
 
     @Mapping(target = "titreRapport", constant = "ETAT PORTEFEUILLE CLIENT CCP")
-    @Mapping(target = "dateEdition", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "numeroPage", constant = "1")
+    @Mapping(target = "dateEdition", expression = "java(java.time.LocalDateTime.parse(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(\"dd/MM/yyyy HH:mm:ss\")), java.time.format.DateTimeFormatter.ofPattern(\"dd/MM/yyyy HH:mm:ss\")))")
     @Mapping(target = "codburpo", source = "codeBureau")
     @Mapping(target = "desburpo", source = "desBureau")
     @Mapping(target = "comptes", source = "compteDTOs")
@@ -62,5 +61,6 @@ public interface RapportCCPMapper {
             Long codeBureau,
             String desBureau,
             List<CompteCCPDetailDTO> compteDTOs,
-            BigDecimal encoursTotal);
+            BigDecimal encoursTotal
+    );
 }
