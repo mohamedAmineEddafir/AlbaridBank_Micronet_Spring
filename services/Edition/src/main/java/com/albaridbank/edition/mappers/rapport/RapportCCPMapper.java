@@ -53,13 +53,13 @@ public interface RapportCCPMapper {
     @Mapping(target = "titreRapport", constant = "ETAT PORTEFEUILLE CLIENT CCP")
     @Mapping(target = "dateEdition", expression = "java(java.time.LocalDateTime.parse(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(\"dd/MM/yyyy HH:mm:ss\")), java.time.format.DateTimeFormatter.ofPattern(\"dd/MM/yyyy HH:mm:ss\")))")
     @Mapping(target = "codburpo", source = "codeBureau")
-    @Mapping(target = "desburpo", source = "desBureau")
+    @Mapping(target = "desburpo", source = "designation")
     @Mapping(target = "comptes", source = "compteDTOs")
     @Mapping(target = "nombreTotalComptes", expression = "java(compteDTOs.size())")
     @Mapping(target = "encoursTotalComptes", source = "encoursTotal")
     PortefeuilleClientCCPDTO creerRapportPortefeuilleClient(
             Long codeBureau,
-            String desBureau,
+            String designation,
             List<CompteCCPDetailDTO> compteDTOs,
             BigDecimal encoursTotal
     );

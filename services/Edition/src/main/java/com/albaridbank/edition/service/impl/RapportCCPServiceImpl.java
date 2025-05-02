@@ -5,6 +5,7 @@ import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCP_Top100_DTO;
+import com.albaridbank.edition.model.ccp.BureauPosteCCP;
 import com.albaridbank.edition.model.ccp.CompteCCP;
 import com.albaridbank.edition.repositorys.ccp.CompteCCPRepository;
 import com.albaridbank.edition.service.interfaces.RapportCCPService;
@@ -52,7 +53,9 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     }
 
     @Override
-    public NbrTotalEncoursCCPDTO genererRapportEncoursGlobal(Long codeBureau) { return null; }
+    public NbrTotalEncoursCCPDTO genererRapportEncoursGlobal(Long codeBureau) {
+        return null;
+    }
 
     /**
      * Generates the CCP Client Portfolio report by retrieving all active accounts
@@ -88,6 +91,13 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             // Map the accounts to their DTO representations
             List<CompteCCPDetailDTO> comptesDTO = compteCCPMapper.toCompteCCPDetailDTOList(comptes);
 
+            String designation = comptes.stream()
+                    .map(CompteCCP::getBureauPoste)
+                    .filter(Objects::nonNull)
+                    .map(BureauPosteCCP::getDesignation)
+                    .findFirst()
+                    .orElse("Unknown Bureau");
+
             // Calculate the total balance of the accounts on this page
             BigDecimal sommeSolde = comptes.stream()
                     .map(CompteCCP::getSoldeCourant)
@@ -96,7 +106,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             // Create the report DTO using the mapper
             PortefeuilleClientCCPDTO rapport = rapportCCPMapper.creerRapportPortefeuilleClient(
                     codeBureau,
-                    "Agence " + codeBureau,
+                    designation,
                     comptesDTO,
                     sommeSolde
             );
