@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### SQL Insertion ###
-services/Edition/src/main/resources/SQL_Insertion/
+/services/Edition/src/main/resources/SQL_Insertion/
