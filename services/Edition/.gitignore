@@ -33,8 +33,4 @@ build/
 .vscode/
 
 ### SQL Insertion ###
-<<<<<<< HEAD
-/services/Edition/src/main/resources/SQL_Insertion/
-=======
 /services/Edition/src/main/resources/SQL_Insertion/*.sql
->>>>>>> 9e45068 (Updates SQL dialect mappings and .gitignore)
