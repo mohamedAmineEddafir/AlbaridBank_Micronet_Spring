@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Albaridbank-Dash-app.iml" filepath="$PROJECT_DIR$/.idea/Albaridbank-Dash-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/services/Edition/Edition.iml" filepath="$PROJECT_DIR$/services/Edition/Edition.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/branche/branche-service.iml" filepath="$PROJECT_DIR$/services/branche/branche-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/customer/customer.iml" filepath="$PROJECT_DIR$/services/customer/customer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/discovery-server/discovery-server.iml" filepath="$PROJECT_DIR$/services/discovery-server/discovery-server.iml" />
     </modules>
   </component>
 </project>
