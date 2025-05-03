@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/SQL_Insertion/CCPbureau_poste_postgres.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/SQL_Insertion/CCPcat_socio_prof_postgres.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/SQL_Insertion/CCPclient_postgres.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/SQL_Insertion/CCPcompte_postgres.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/SQL_Insertion/CCPmvtfinancier_postgres.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V1__Create_Schemas.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V2__Create_Tables_CCP.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/services/Edition/src/main/resources/db/migration/V3__Create_Tables_CEN.sql" dialect="PostgreSQL" />
