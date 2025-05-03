@@ -11,7 +11,7 @@ public interface OperCompCENMapper {
 
     @Mapping(source = "compteDebit", target = "idencomp")
     @Mapping(expression = "java(getIntituleCompte(operComp))", target = "inticomp")
-    @Mapping(source = "typeOperation", target = "libtypop")
+    @Mapping(source = "typeOperation.libelle", target = "libtypop")
     @Mapping(expression = "java(getSens(operComp))", target = "sensMouvement")
     @Mapping(source = "montantOperation", target = "montoper")
     MouvementCENDTO toMouvementCENDTO(OperCompCEN operComp);

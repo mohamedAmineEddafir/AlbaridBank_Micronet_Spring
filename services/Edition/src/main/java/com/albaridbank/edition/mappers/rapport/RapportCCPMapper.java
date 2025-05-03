@@ -17,7 +17,7 @@ import java.util.List;
         imports = {LocalDate.class, LocalDateTime.class, BigDecimal.class})
 public interface RapportCCPMapper {
 
-    @Mapping(target = "titreRapport", expression = "java(\"ETAT COMPTES MOUVEMENTEES \" + (joursAvant == 1 ? \"VEILLE\" : \"AVANT VEILLE\"))")
+    @Mapping(target = "titreRapport", expression = "java(\"ETAT DES COMPTES MOUVEMENTEES \" + (joursAvant == 1 ? \"VEILLE\" : \"AVANT VEILLE\"))")
     @Mapping(target = "dateEdition", expression = "java(LocalDateTime.now())")
     @Mapping(target = "numeroPage", constant = "0")
     @Mapping(target = "journeeDu", source = "dateRapport")

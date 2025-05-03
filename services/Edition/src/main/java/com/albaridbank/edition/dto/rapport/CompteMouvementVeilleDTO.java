@@ -2,6 +2,7 @@ package com.albaridbank.edition.dto.rapport;
 
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Data
 @SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompteMouvementVeilleDTO implements Serializable {

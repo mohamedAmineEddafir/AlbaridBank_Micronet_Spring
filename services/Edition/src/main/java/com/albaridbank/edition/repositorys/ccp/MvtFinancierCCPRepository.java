@@ -2,6 +2,8 @@ package com.albaridbank.edition.repositorys.ccp;
 
 import com.albaridbank.edition.model.ccp.BureauPosteCCP;
 import com.albaridbank.edition.model.ccp.MvtFinancierCCP;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,11 +37,12 @@ public interface MvtFinancierCCPRepository extends JpaRepository<MvtFinancierCCP
      * @param montantMinimum  The minimum amount of the movements
      * @return A list of financial movements meeting the criteria.
      */
-    @Query("SELECT m FROM MvtFinancierCCP m WHERE m.dateMouvement = :dateMouvement AND m.bureauPoste = :codeBureauPoste AND ABS(m.montant) >= :montantMinimum")
-    List<MvtFinancierCCP> findByDateMouvementAndCodeBureauPosteAndMontantMin(
+    @Query("SELECT m FROM MvtFinancierCCP m WHERE m.dateMouvement = :dateMouvement AND m.bureauPoste = :bureauPoste AND ABS(m.montant) >= :montantMinimum")
+    Page<MvtFinancierCCP> findByDateMouvementAndBureauPosteAndMontantMinPaginated(
             @Param("dateMouvement") LocalDate dateMouvement,
             @Param("bureauPoste") BureauPosteCCP bureauPoste,
-            @Param("montantMinimum") BigDecimal montantMinimum);
+            @Param("montantMinimum") BigDecimal montantMinimum,
+            Pageable pageable);
 
     /**
      * Calculates the total number of distinct accounts and the total amount for a specific date and post office.
