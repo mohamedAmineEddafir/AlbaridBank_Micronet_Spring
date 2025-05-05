@@ -2,13 +2,16 @@ package com.albaridbank.edition.mappers.cen;
 
 import com.albaridbank.edition.dto.base.MouvementCENDTO;
 import com.albaridbank.edition.model.cen.OperCompCEN;
+import com.albaridbank.edition.model.cen.TypeOperCEN;
 import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface OperCompCENMapper {
+    // Vos méthodes de mappage existantes...
 
+<<<<<<< Updated upstream
     @Mapping(source = "compteDebit", target = "idencomp")
     @Mapping(expression = "java(getIntituleCompte(operComp))", target = "inticomp")
     @Mapping(source = "typeOperation.libelle", target = "libtypop")
@@ -20,5 +23,16 @@ public interface OperCompCENMapper {
 
     default String getSens(OperCompCEN operComp) {
         return operComp.getCompteDebit() != null ? "D" : "C";
+=======
+    // Ajoutez cette méthode pour résoudre l'erreur:
+    default String map(TypeOperCEN typeOperCEN) {
+        if (typeOperCEN == null) {
+            return null;
+        }
+        // Retournez la propriété appropriée de TypeOperCEN qui représente
+        // la valeur textuelle que vous souhaitez mapper
+        // Par exemple:
+        return typeOperCEN.getLibelle(); // Ou toute autre méthode qui renvoie la description/libellé
+>>>>>>> Stashed changes
     }
 }

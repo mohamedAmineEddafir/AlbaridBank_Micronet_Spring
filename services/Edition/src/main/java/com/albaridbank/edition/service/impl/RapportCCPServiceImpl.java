@@ -26,7 +26,14 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+<<<<<<< Updated upstream
 import java.util.List;
+=======
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+>>>>>>> Stashed changes
 
 /**
  * Service implementation for generating CCP reports.
@@ -46,7 +53,13 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     /**
      * Repository for accessing CCP account data.
      */
+<<<<<<< Updated upstream
     private final MvtFinancierCCPMapper mvtFinancierCCPMapper;
+=======
+    private final CompteCCPRepository compteCCPRepository;
+    private final RapportCCPMapper rapportCCPMapper;
+    private final CompteCCPMapper compteCCPMapper;
+>>>>>>> Stashed changes
     private final BureauPosteCCPRepository bureauPosteCCPRepository;
     private final MvtFinancierCCPRepository mvtFinancierCCPRepository;
 
@@ -63,6 +76,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      */
     @Override
     public Page<CompteMouvementVeilleDTO> genererRapportMouvementVeille(
+<<<<<<< Updated upstream
             Long codeBureau,
             Integer joursAvant,
             BigDecimal montantMinimum,
@@ -99,6 +113,56 @@ public class RapportCCPServiceImpl implements RapportCCPService {
                     bureau.getCodeBureau(),
                     bureau.getDesignation(),
                     dateMouvement,
+=======
+            Long codeBureau, Integer joursAvant, BigDecimal montantMinimum, Pageable pageable) {
+
+        try {
+            // Rechercher le bureau postal
+            BureauPosteCCP bureau = bureauPosteCCPRepository.findById(codeBureau)
+                    .orElseThrow(() -> new EntityNotFoundException("Bureau avec code " + codeBureau + " non trouvé"));
+
+            // Calculer la date pour le rapport
+            LocalDate dateRapport = LocalDate.now().minusDays(joursAvant);
+
+            // Récupérer les statistiques (nombre comptes + montant total)
+            Object[] stats = mvtFinancierCCPRepository.countDistinctAccountsAndSumMontant(dateRapport, bureau);
+
+            // CORRECTION ICI - Extraire correctement les valeurs du tableau
+            int nombreComptes = 0;
+            BigDecimal montantTotal = BigDecimal.ZERO;
+
+            if (stats != null) {
+                // L'index 0 contient le COUNT
+                if (stats[0] != null) {
+                    nombreComptes = ((Number) stats[0]).intValue(); // Convertir en Integer pour le mapper
+                }
+
+                // L'index 1 contient la SUM
+                if (stats[1] != null) {
+                    montantTotal = new BigDecimal(stats[1].toString());
+                }
+            }
+
+            // Récupérer les mouvements financiers avec pagination
+            Page<MvtFinancierCCP> mouvementsPage = mvtFinancierCCPRepository
+                    .findByDateMouvementAndBureauPosteAndMontantMinPaginated(
+                            dateRapport, bureau, montantMinimum, pageable);
+
+            // Convertir les mouvements en DTOs
+            List<MouvementFinancierDTO> mouvementDTOs = mouvementsPage.getContent().stream()
+                    .map(mvt -> {
+                        // Créer et mapper votre DTO de mouvement financier
+                        // ... (remplir les propriétés du DTO)
+                        return new MouvementFinancierDTO();
+                    })
+                    .collect(Collectors.toList());
+
+            // Créer le rapport principal en utilisant le mapper
+            CompteMouvementVeilleDTO rapportDTO = rapportCCPMapper.creerRapportMouvementVeille(
+                    codeBureau,
+                    bureau.getDesignation(), // ou autre propriété qui contient le nom du bureau
+                    dateRapport,
+>>>>>>> Stashed changes
                     mouvementDTOs,
                     nombreComptes,
                     montantTotal,
@@ -106,6 +170,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
                     montantMinimum
             );
 
+<<<<<<< Updated upstream
             // Return the result with correct pagination information for the UI
             return new PageImpl<>(
                     Collections.singletonList(rapport),    // A single report per page
@@ -117,6 +182,17 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             throw e; // Re-throw the already logged exception
         } catch (Exception e) {
             log.error("Erreur lors de la génération du rapport pour le bureau: {}", codeBureau, e);
+=======
+            // Créer une Page à partir du DTO créé
+            return new PageImpl<>(
+                    Collections.singletonList(rapportDTO),
+                    pageable,
+                    1 // un seul résultat
+            );
+        } catch (EntityNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+>>>>>>> Stashed changes
             throw new ServiceException("Erreur lors de la génération du rapport: " + e.getMessage(), e);
         }
     }
