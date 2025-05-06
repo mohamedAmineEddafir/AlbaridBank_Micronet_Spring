@@ -2,10 +2,12 @@ package com.albaridbank.edition.repositorys.ccp;
 
 import com.albaridbank.edition.model.ccp.BureauPosteCCP;
 import com.albaridbank.edition.model.ccp.MvtFinancierCCP;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -30,27 +32,35 @@ public interface MvtFinancierCCPRepository extends JpaRepository<MvtFinancierCCP
     List<MvtFinancierCCP> findByDateMouvementAndBureauPoste(LocalDate dateMouvement, BureauPosteCCP bureauPoste);
 
     /**
-     * Finds financial movements for a specific date and post office with a minimum amount.
+     * Finds all financial movements for a specific date and bureau code with a minimum amount.
      *
-     * @param dateMouvement   The date of the movements.
-     * @param bureauPoste The code of the post office.
-     * @param montantMinimum  The minimum amount of the movements
+     * @param dateMouvement  The date of the movements.
+     * @param codeBureau     The code of the post office.
+     * @param montantMinimum The minimum amount of the movements
      * @return A list of financial movements meeting the criteria.
      */
-    @Query("SELECT m FROM MvtFinancierCCP m WHERE m.dateMouvement = :dateMouvement AND m.bureauPoste = :bureauPoste AND ABS(m.montant) >= :montantMinimum")
-    Page<MvtFinancierCCP> findByDateMouvementAndBureauPosteAndMontantMinPaginated(
+    @Query("SELECT m FROM MvtFinancierCCP m " +
+            "LEFT JOIN FETCH m.bureauPoste " +
+            "LEFT JOIN FETCH m.compte " +
+            "LEFT JOIN FETCH m.typeOperation " +
+            "WHERE m.dateMouvement = :dateMouvement AND m.codeBureau = :codeBureau AND ABS(m.montant) >= :montantMinimum " +
+            "ORDER BY m.dateCreation DESC, m.montant DESC")
+    Page<MvtFinancierCCP> findPageByDateMouvementAndCodeBureauAndMontantMin(
             @Param("dateMouvement") LocalDate dateMouvement,
-            @Param("bureauPoste") BureauPosteCCP bureauPoste,
+            @Param("codeBureau") BigDecimal codeBureau,
             @Param("montantMinimum") BigDecimal montantMinimum,
             Pageable pageable);
 
     /**
-     * Calculates the total number of distinct accounts and the total amount for a specific date and post office.
+     * Counts distinct accounts and sums the movement amounts for a given date and bureau.
      *
-     * @param dateMouvement   The date of the movements.
-     * @param bureauPoste The code of the post office.
-     * @return An Object array where [0] = number of distinct accounts and [1] = sum of amounts.
+     * @param date       The date of the movements
+     * @param codeBureau The bureau code
+     * @return An array with [0] = count of distinct accounts, [1] = sum of movement amounts
      */
-    @Query("SELECT COUNT(DISTINCT m.compte.idCompte), SUM(ABS(m.montant)) FROM MvtFinancierCCP m WHERE m.dateMouvement = :dateMouvement AND m.bureauPoste = :bureauPoste")
-    Object[] countDistinctAccountsAndSumMontant(@Param("dateMouvement") LocalDate dateMouvement, @Param("bureauPoste") BureauPosteCCP bureauPoste);
+    @Query("SELECT COUNT(DISTINCT m.compteId), SUM(m.montant) FROM MvtFinancierCCP m " +
+            "WHERE m.dateMouvement = :date AND m.codeBureau = :codeBureau")
+    Object[] countDistinctAccountsAndSumMontant(
+            @Param("date") LocalDate date,
+            @Param("codeBureau") BigDecimal codeBureau);
 }

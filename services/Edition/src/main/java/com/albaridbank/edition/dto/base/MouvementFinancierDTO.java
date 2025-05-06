@@ -22,6 +22,6 @@ public class MouvementFinancierDTO implements Serializable {
     private Long codburpo;         // Code bureau poste
     private String desburpo;       // Agence de l'opération
     private String libtypop;       // Type d'opération
-    private String sensmouv;       // Sens du mouvement (D/C)
+    private String sensmouv;       // Sens du mouvement (D (Debit) / C (Credit))
     private BigDecimal montmouv;   // Montant du mouvement
 }
