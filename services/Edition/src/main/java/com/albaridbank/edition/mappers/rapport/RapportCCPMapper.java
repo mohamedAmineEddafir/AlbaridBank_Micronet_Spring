@@ -6,6 +6,7 @@ import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ public interface RapportCCPMapper {
             Long codeBureau,
             String desBureau,
             LocalDate dateRapport,
-            List<MouvementFinancierDTO> mouvementDTOs,
+            Page<MouvementFinancierDTO> mouvementDTOs,
             Integer nombreComptes,
             BigDecimal montantTotal,
             Integer joursAvant,
