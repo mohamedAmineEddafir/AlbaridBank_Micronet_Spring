@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Page;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -35,11 +36,15 @@ public class CompteMouvementVeilleDTO implements Serializable {
     private String nomAgence;
 
     // Données du rapport
-    private List<MouvementFinancierDTO> mouvements;
+    private Page<MouvementFinancierDTO> mouvements;
     private Integer nombreTotalComptes;
     private BigDecimal montantTotal;
 
     // Paramètres
     private Integer joursAvant; // 1 pour veille, 2 pour avant-veille
     private BigDecimal montantMinimum;
+
+    // Champs d'audit
+    private String createdBy;
+    private LocalDateTime creationDateTime;
 }
