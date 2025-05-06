@@ -10,15 +10,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "mvtfinancierccp") // PostgreSQL requires double quotes for case sensitivity
+@Table(name = "mvtfinancierccp")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MvtFinancierCCP {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "numemouv")
+    private Integer numeroMouvement;
+
+    @Column(name = "cptemouv", insertable = false, updatable = false)
+    private BigDecimal compteId;  // Ajouter ce champ pour le mappage JPA direct
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cptemouv")
@@ -26,9 +29,6 @@ public class MvtFinancierCCP {
 
     @Column(name = "datemouv")
     private LocalDate dateMouvement;
-
-    @Column(name = "numemouv")
-    private Integer numeroMouvement;
 
     @Column(name = "sensmouv")
     private String sens;
@@ -42,15 +42,21 @@ public class MvtFinancierCCP {
     @Column(name = "solddepa")
     private BigDecimal soldeDepartCompte;
 
+    @Column(name = "codburpo", insertable = false, updatable = false)
+    private BigDecimal codeBureau;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codburpo")
     private BureauPosteCCP bureauPoste;
 
     @Column(name = "numeordr")
-    private Long numeroOrdre;
+    private BigDecimal numeroOrdre;
 
     @Column(name = "dateoper")
     private LocalDate dateOperation;
+
+    @Column(name = "codtypop", insertable = false, updatable = false)
+    private BigDecimal codeTypeOperation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codtypop")
