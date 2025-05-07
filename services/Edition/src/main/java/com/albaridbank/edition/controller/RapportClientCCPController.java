@@ -7,82 +7,69 @@ import com.albaridbank.edition.service.interfaces.RapportCCPService;
 import jakarta.persistence.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Contrôleur REST pour la génération de rapports CCP.
- * Ce contrôleur expose les endpoints permettant de générer différents types de rapports
- * pour les comptes CCP (Comptes Chèques Postaux).
+ * REST controller for generating CCP reports.
+ * Provides endpoints for generating client portfolio, financial movements, and global balance reports.
+ * Includes Swagger annotations for API documentation.
+ * <p>
  *
  * @author Mohamed Amine Eddafir
  */
 @RestController
 @RequestMapping("/api/rapports-ccp")
-@Tag(name = "Rapports CCP", description = "Endpoints pour la génération de rapports CCP")
+@Tag(name = "Rapports CCP", description = "Endpoints for generating CCP reports")
 @SecurityRequirement(name = "bearer-key")
 @RequiredArgsConstructor
 @Slf4j
 public class RapportClientCCPController {
 
     private final RapportCCPService rapportCCPService;
+    private static final List<String> VALID_SORT_PROPERTIES = List.of("dateCreation", "montant", "dateMouvement");
 
     /**
-     * Génère un rapport sur l'état du portefeuille client pour un bureau spécifique.
-     * Ce rapport inclut la liste des comptes actifs du bureau et le solde total.
+     * Generates a report on the client portfolio status for a specific bureau.
      *
-     * @param codeBureau Identifiant du bureau postal
-     * @param page Numéro de la page à récupérer (commence à 0)
-     * @param size Nombre d'éléments par page
-     * @return Le rapport du portefeuille client avec les détails des comptes
+     * @param codeBureau The identifier of the postal bureau.
+     * @param page       The page number for pagination (default is 0).
+     * @param size       The size of the page for pagination (default is 10).
+     * @return A ResponseEntity containing the client portfolio report or an appropriate HTTP status.
      */
     @Operation(
-            summary = "Générer un rapport d'état du portefeuille client",
-            description = "Récupère la liste des comptes actifs pour un bureau spécifique avec leurs soldes et le solde total",
-            security = @SecurityRequirement(name = "bearer-key")
+            summary = "Generate client portfolio status report",
+            description = "Retrieves the list of active accounts for a specific bureau with their balances"
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Rapport généré avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PortefeuilleClientCCPDTO.class))
-            ),
-            @ApiResponse(responseCode = "400", description = "Paramètres invalides", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Bureau non trouvé", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erreur interne du serveur", content = @Content)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Report successfully generated"),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters"),
+            @ApiResponse(responseCode = "404", description = "Bureau not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/etat-portefeuille-client/{codeBureau}")
+    @GetMapping("/agence/{codeBureau}/portefeuille-client")
     public ResponseEntity<PortefeuilleClientCCPDTO> getRapportPortefeuilleClient(
-            @PathVariable
-            @Parameter(description = "Identifiant du bureau postal", required = true, example = "12345")
-            Long codeBureau,
+            @PathVariable @Parameter(description = "Postal bureau identifier", required = true) Long codeBureau,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-            @RequestParam(defaultValue = "0")
-            @Parameter(description = "Numéro de page (commence à 0)", example = "0")
-            int page,
-
-            @RequestParam(defaultValue = "10")
-            @Parameter(description = "Nombre d'éléments par page", example = "10")
-            int size
-    ) {
-        log.info("Génération du rapport Portefeuille Client CCP pour le bureau: {}", codeBureau);
+        log.info("Generating CCP Client Portfolio report for bureau: {}", codeBureau);
 
         try {
             if (codeBureau == null) {
@@ -93,129 +80,98 @@ public class RapportClientCCPController {
             Page<PortefeuilleClientCCPDTO> resultPage = rapportCCPService.genererRapportPortefeuilleClient(pageable, codeBureau);
 
             if (resultPage.isEmpty()) {
-                log.warn("Aucun rapport trouvé pour le bureau: {}", codeBureau);
+                log.warn("No report found for bureau: {}", codeBureau);
                 return ResponseEntity.notFound().build();
             }
 
-            // Extraction du premier élément de la page
-            PortefeuilleClientCCPDTO report = resultPage.getContent().getFirst();
-            return ResponseEntity.ok(report);
+            return ResponseEntity.ok(resultPage.getContent().getFirst());
         } catch (EntityNotFoundException e) {
-            log.error("Bureau non trouvé: {}", codeBureau, e);
+            log.error("Bureau not found: {}", codeBureau);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Erreur lors de la génération du rapport pour le bureau: {}", codeBureau, e);
+            log.error("Error generating report for bureau: {}", codeBureau, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     /**
-     * Génère un rapport des mouvements financiers pour un bureau spécifique.
-     * Le rapport inclut les mouvements financiers sur une période définie et avec un montant minimum.
+     * Generates a financial movements report for a specific bureau.
      *
-     * @param codeBureau Identifiant du bureau postal
-     * @param joursAvant Nombre de jours avant aujourd'hui (1 pour hier, 2 pour avant-hier, etc.)
-     * @param montantMinimum Montant minimum des mouvements à inclure
-     * @param pageable Informations de pagination
-     * @return Un rapport paginé des mouvements financiers
+     * <p>This endpoint retrieves financial movements filtered by date and minimum amount.
+     * It supports pagination and sorting by descending amount.
+     *
+     * @param codeAgence     The identifier of the postal bureau.
+     * @param montantMinimum The minimum amount of movements to include (default is 0).
+     * @param joursAvant     The number of days before today to filter movements (default is 1).
+     * @param page           The page number for pagination (default is 0).
+     * @param size           The number of items per page for pagination (default is 20).
+     * @return A {@link ResponseEntity} containing the financial movements report.
      */
     @Operation(
-            summary = "Générer un rapport des mouvements financiers",
-            description = "Récupère les mouvements financiers pour un bureau spécifique, filtrés par date et montant minimum",
-            security = @SecurityRequirement(name = "bearer-key")
+            summary = "Générer un rapport de mouvements financiers",
+            description = "Récupère les mouvements financiers filtrés par date et montant minimum"
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Rapport généré avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompteMouvementVeilleDTO.class))
-            ),
-            @ApiResponse(responseCode = "400", description = "Paramètres de requête invalides", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Bureau non trouvé", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erreur interne du serveur", content = @Content)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Rapport généré avec succès"),
+            @ApiResponse(responseCode = "204", description = "Aucun mouvement trouvé"),
+            @ApiResponse(responseCode = "400", description = "Paramètres invalides"),
+            @ApiResponse(responseCode = "404", description = "Bureau non trouvé"),
+            @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
     })
-    @GetMapping("/mouvements")
-    public ResponseEntity<Page<CompteMouvementVeilleDTO>> getRapportMouvements(
-            @RequestParam
-            @Parameter(description = "Identifiant du bureau postal", required = true, example = "12345")
-            Long codeBureau,
+    @GetMapping("/compte-mouvement-veille")
+    public ResponseEntity<CompteMouvementVeilleDTO> genererRapport(
+            @RequestParam Long codeAgence,
+            @RequestParam(required = false, defaultValue = "0") BigDecimal montantMinimum,
+            @RequestParam(required = false, defaultValue = "1") Integer joursAvant,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size) {
 
-            @RequestParam(defaultValue = "1")
-            @Parameter(description = "Nombre de jours avant aujourd'hui (1 pour hier, 2 pour avant-hier, etc.)", example = "1")
-            Integer joursAvant,
+        log.info("Generating financial movements report for bureau: {}", codeAgence);
+        log.info("Minimum amount: {}", montantMinimum);
+        log.info("Days before: {}", joursAvant);
+        log.info("Page: {}, Size: {}", page, size);
 
-            @RequestParam
-            @Parameter(description = "Montant minimum des mouvements à inclure", example = "1000.00")
-            BigDecimal montantMinimum,
+        // Create a pagination object with sorting by descending amount
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "montant")
+        );
 
-            @Parameter(hidden = true)
-            @PageableDefault(size = 20, sort = "dateMouvement", direction = Sort.Direction.DESC)
-            Pageable pageable
-    ) {
-        log.info("Génération du rapport de mouvements pour le bureau: {}, jours: {}, montant minimum: {}",
-                codeBureau, joursAvant, montantMinimum);
+        // Call the service to generate the report
+        CompteMouvementVeilleDTO rapport = rapportCCPService.rapportMouvementVeille(
+                codeAgence,
+                montantMinimum,
+                joursAvant,
+                pageable
+        );
 
-        // Validation des paramètres d'entrée
-        if (codeBureau == null || joursAvant == null || joursAvant <= 0 || montantMinimum == null) {
-            log.warn("Paramètres invalides: codeBureau={}, joursAvant={}, montantMinimum={}",
-                    codeBureau, joursAvant, montantMinimum);
-            return ResponseEntity.badRequest().build();
-        }
-
-        try {
-            Page<CompteMouvementVeilleDTO> rapport = rapportCCPService.genererRapportMouvementVeille(
-                    codeBureau, joursAvant, montantMinimum, pageable);
-
-            if (rapport.isEmpty()) {
-                log.info("Aucun mouvement trouvé pour les critères spécifiés");
-            }
-
-            return ResponseEntity.ok(rapport);
-        } catch (EntityNotFoundException e) {
-            log.error("Bureau non trouvé: {}", codeBureau, e);
-            return ResponseEntity.notFound().build();
-        } catch (ServiceException e) {
-            log.error("Erreur de service lors de la génération du rapport: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (Exception e) {
-            log.error("Erreur inattendue lors de la génération du rapport de mouvements", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(rapport);
     }
 
     /**
-     * Génère un rapport d'encours global pour un bureau spécifique.
-     * Note : Cette méthode est un placeholder car l'implémentation n'est pas encore complète dans le service.
+     * Generates a global balance report for a specific bureau.
      *
-     * @param codeBureau Identifiant du bureau postal
-     * @return Le rapport d'encours global ou 501 Not Implemented
+     * @param codeBureau The postal bureau code.
+     * @return A ResponseEntity containing the global balance report or an appropriate HTTP status.
      */
     @Operation(
-            summary = "Générer un rapport d'encours global",
-            description = "Récupère le rapport d'encours global pour un bureau spécifique",
-            security = @SecurityRequirement(name = "bearer-key")
+            summary = "Generate global balance report",
+            description = "Retrieves the global balance report for a specific bureau"
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Rapport généré avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = NbrTotalEncoursCCPDTO.class))
-            ),
-            @ApiResponse(responseCode = "404", description = "Bureau non trouvé", content = @Content),
-            @ApiResponse(responseCode = "501", description = "Fonctionnalité non implémentée", content = @Content)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Report successfully generated"),
+            @ApiResponse(responseCode = "404", description = "Bureau not found"),
+            @ApiResponse(responseCode = "501", description = "Feature not implemented")
     })
     @GetMapping("/encours-global/{codeBureau}")
     public ResponseEntity<NbrTotalEncoursCCPDTO> getRapportEncoursGlobal(
-            @PathVariable
-            @Parameter(description = "Identifiant du bureau postal", required = true, example = "12345")
-            Long codeBureau
-    ) {
-        log.info("Demande de rapport d'encours global pour le bureau: {}", codeBureau);
+            @PathVariable Long codeBureau) {
 
+        log.info("Requesting global balance report for bureau: {}", codeBureau);
         NbrTotalEncoursCCPDTO rapport = rapportCCPService.genererRapportEncoursGlobal(codeBureau);
 
         if (rapport == null) {
-            log.warn("La fonctionnalité de rapport d'encours global n'est pas encore implémentée");
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
 

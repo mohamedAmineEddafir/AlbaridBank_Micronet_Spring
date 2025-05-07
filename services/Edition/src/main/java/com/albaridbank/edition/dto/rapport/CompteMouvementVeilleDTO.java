@@ -17,7 +17,6 @@ import java.util.List;
 
 @Data
 @SuperBuilder
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompteMouvementVeilleDTO implements Serializable {
@@ -28,7 +27,7 @@ public class CompteMouvementVeilleDTO implements Serializable {
     // Informations d'en-tête
     private String titreRapport;
     private LocalDateTime dateEdition;
-    private String numeroPage;
+    private Integer numeroPage;
     private LocalDate journeeDu;
 
     // Informations de l'agence

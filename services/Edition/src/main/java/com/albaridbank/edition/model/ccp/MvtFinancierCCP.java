@@ -20,9 +20,6 @@ public class MvtFinancierCCP {
     @Column(name = "numemouv")
     private Integer numeroMouvement;
 
-    @Column(name = "cptemouv", insertable = false, updatable = false)
-    private BigDecimal compteId;  // Ajouter ce champ pour le mappage JPA direct
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cptemouv")
     private CompteCCP compte;

@@ -18,9 +18,9 @@ import java.util.List;
         imports = {LocalDate.class, LocalDateTime.class, BigDecimal.class})
 public interface RapportCCPMapper {
 
-    @Mapping(target = "titreRapport", expression = "java(\"ETAT DES COMPTES MOUVEMENTEES \" + (joursAvant == 1 ? \"VEILLE\" : \"AVANT VEILLE\"))")
+    @Mapping(target = "titreRapport", expression = "java(\"ETAT DES COMPTES MOUVEMENTEES \" + (joursAvant == 1 ? \"LA VEILLE\" : \"L'AVANT VEILLE\"))")
     @Mapping(target = "dateEdition", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "numeroPage", constant = "0")
+    @Mapping(target = "numeroPage", constant = "1")
     @Mapping(target = "journeeDu", source = "dateRapport")
     @Mapping(target = "codeAgence", source = "codeBureau")
     @Mapping(target = "nomAgence", source = "desBureau")
@@ -29,6 +29,8 @@ public interface RapportCCPMapper {
     @Mapping(target = "montantTotal", source = "montantTotal")
     @Mapping(target = "joursAvant", source = "joursAvant")
     @Mapping(target = "montantMinimum", source = "montantMinimum")
+    @Mapping(target = "createdBy", expression = "java(\"SYSTEM\")")
+    @Mapping(target = "creationDateTime", expression = "java(LocalDateTime.now())")
     CompteMouvementVeilleDTO creerRapportMouvementVeille(
             Long codeBureau,
             String desBureau,
