@@ -18,20 +18,17 @@ import java.math.BigDecimal;
  * @author Mohamed Amine Eddafir
  */
 public interface RapportCCPService {
+
     /**
-     * Génère un rapport des mouvements de veille pour les comptes CCP
+     * Génère un rapport des comptes mouvementés la veille ou l'avant-veille
      *
-     * @param codeBureau     Code du bureau de poste
-     * @param joursAvant     Nombre de jours avant la veille
-     * @param montantMinimum Montant minimum des mouvements
-     * @param pageable       Pagination des résultats
-     * @return Rapport des mouvements de veille
+     * @param codeBureau     Code de l'agence
+     * @param montantMinimum Montant minimum des mouvements à prendre en compte
+     * @param joursAvant     Nombre de jours avant la date actuelle (1 pour veille, 2 pour avant-veille)
+     * @param pageable       Information de pagination
+     * @return DTO contenant les informations du rapport
      */
-    Page<CompteMouvementVeilleDTO> genererRapportMouvementVeille(
-            Long codeBureau,
-            Integer joursAvant,
-            BigDecimal montantMinimum,
-            Pageable pageable);
+    CompteMouvementVeilleDTO rapportMouvementVeille(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant, Pageable pageable);
 
     /**
      * Génère un rapport du nombre total et de l'encours des comptes CCP

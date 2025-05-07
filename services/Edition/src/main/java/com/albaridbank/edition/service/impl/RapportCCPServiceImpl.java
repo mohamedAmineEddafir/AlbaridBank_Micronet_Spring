@@ -19,27 +19,38 @@ import com.albaridbank.edition.mappers.ccp.CompteCCPMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-<<<<<<< Updated upstream
-import java.util.List;
-=======
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
->>>>>>> Stashed changes
+import java.util.*;
 
 /**
  * Service implementation for generating CCP reports.
  * Provides methods to generate various types of reports related to CCP accounts.
  *
+ * <p>This service includes functionalities for generating:
+ * <ul>
+ *   <li>Financial movement reports for a specific past date</li>
+ *   <li>Global outstanding balance reports</li>
+ *   <li>Client portfolio reports</li>
+ *   <li>Top 100 accounts by balance reports</li>
+ * </ul>
+ *
+ * <p>It uses repositories for data access and mappers for converting between entities and DTOs.
+ * Pagination is supported for handling large datasets.
+ *
  * @author Mohamed Amine Eddafir
+ * 
+ * @see RapportCCPService
+ * @see MvtFinancierCCP
+ * @see CompteCCP
+ * @see BureauPosteCCP
  */
 @Slf4j
 @Service
@@ -50,18 +61,16 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      * List of inactive account states.
      */
     private static final List<String> INACTIVE_STATES = List.of("C", "I", "B");
+
     /**
-     * Repository for accessing CCP account data.
+     * Dependencies injected via constructor.
      */
-<<<<<<< Updated upstream
-    private final MvtFinancierCCPMapper mvtFinancierCCPMapper;
-=======
+    private final MvtFinancierCCPMapper mvtFinancierMapper;
     private final CompteCCPRepository compteCCPRepository;
     private final RapportCCPMapper rapportCCPMapper;
     private final CompteCCPMapper compteCCPMapper;
->>>>>>> Stashed changes
-    private final BureauPosteCCPRepository bureauPosteCCPRepository;
-    private final MvtFinancierCCPRepository mvtFinancierCCPRepository;
+    private final BureauPosteCCPRepository bureauPosteRepository;
+    private final MvtFinancierCCPRepository  mvtFinancierRepository;
 
     /**
      * Generates a paginated report of financial movements for a specific past date.
@@ -71,133 +80,70 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      * @param joursAvant     The number of days before today (1 for yesterday, 2 for the day before, etc.).
      * @param montantMinimum The minimum amount of movement to consider.
      * @param pageable       The pagination information for the list of movements.
-     * @return A Page object containing the report with paginated financial movements.
+     * @return A {@link CompteMouvementVeilleDTO} object containing the report with paginated financial movements.
      * @throws EntityNotFoundException If the specified bureau does not exist.
      */
     @Override
-    public Page<CompteMouvementVeilleDTO> genererRapportMouvementVeille(
-<<<<<<< Updated upstream
-            Long codeBureau,
-            Integer joursAvant,
-            BigDecimal montantMinimum,
-            Pageable pageable) {
-
-        log.info("Génération du rapport de mouvements pour le bureau: {}, jours avant: {}, montant minimum: {}",
-                codeBureau, joursAvant, montantMinimum);
-
-        try {
-            // Retrieve the bureau and prepare the base data
-            LocalDate dateMouvement = LocalDate.now().minusDays(joursAvant);
-
-            BureauPosteCCP bureau = bureauPosteCCPRepository.findByCodeBureau(codeBureau)
-                    .orElseThrow(() -> {
-                        log.error("Bureau non trouvé avec code: {}", codeBureau);
-                        return new EntityNotFoundException("Bureau non trouvé avec code: " + codeBureau);
-                    });
-
-            // Calculate statistics (number of accounts and amounts)
-            Object[] stats = mvtFinancierCCPRepository.countDistinctAccountsAndSumMontant(dateMouvement, bureau);
-            Integer nombreComptes = ((Number) stats[0]).intValue();
-            BigDecimal montantTotal = (stats[1] != null) ? (BigDecimal) stats[1] : BigDecimal.ZERO;
-
-            // Retrieve paginated financial movements
-            Page<MvtFinancierCCP> mouvementsPage = mvtFinancierCCPRepository
-                    .findByDateMouvementAndBureauPosteAndMontantMinPaginated(dateMouvement, bureau, montantMinimum, pageable);
-
-            // Map the movements to DTOs
-            List<MouvementFinancierDTO> mouvementDTOs = mvtFinancierCCPMapper
-                    .toMouvementFinancierDTOList(mouvementsPage.getContent());
-
-            // Use the MapStruct mapper to create the report
-            CompteMouvementVeilleDTO rapport = rapportCCPMapper.creerRapportMouvementVeille(
-                    bureau.getCodeBureau(),
-                    bureau.getDesignation(),
-                    dateMouvement,
-=======
-            Long codeBureau, Integer joursAvant, BigDecimal montantMinimum, Pageable pageable) {
-
-        try {
-            // Rechercher le bureau postal
-            BureauPosteCCP bureau = bureauPosteCCPRepository.findById(codeBureau)
-                    .orElseThrow(() -> new EntityNotFoundException("Bureau avec code " + codeBureau + " non trouvé"));
-
-            // Calculer la date pour le rapport
-            LocalDate dateRapport = LocalDate.now().minusDays(joursAvant);
-
-            // Récupérer les statistiques (nombre comptes + montant total)
-            Object[] stats = mvtFinancierCCPRepository.countDistinctAccountsAndSumMontant(dateRapport, bureau);
-
-            // CORRECTION ICI - Extraire correctement les valeurs du tableau
-            int nombreComptes = 0;
-            BigDecimal montantTotal = BigDecimal.ZERO;
-
-            if (stats != null) {
-                // L'index 0 contient le COUNT
-                if (stats[0] != null) {
-                    nombreComptes = ((Number) stats[0]).intValue(); // Convertir en Integer pour le mapper
-                }
-
-                // L'index 1 contient la SUM
-                if (stats[1] != null) {
-                    montantTotal = new BigDecimal(stats[1].toString());
-                }
-            }
-
-            // Récupérer les mouvements financiers avec pagination
-            Page<MvtFinancierCCP> mouvementsPage = mvtFinancierCCPRepository
-                    .findByDateMouvementAndBureauPosteAndMontantMinPaginated(
-                            dateRapport, bureau, montantMinimum, pageable);
-
-            // Convertir les mouvements en DTOs
-            List<MouvementFinancierDTO> mouvementDTOs = mouvementsPage.getContent().stream()
-                    .map(mvt -> {
-                        // Créer et mapper votre DTO de mouvement financier
-                        // ... (remplir les propriétés du DTO)
-                        return new MouvementFinancierDTO();
-                    })
-                    .collect(Collectors.toList());
-
-            // Créer le rapport principal en utilisant le mapper
-            CompteMouvementVeilleDTO rapportDTO = rapportCCPMapper.creerRapportMouvementVeille(
-                    codeBureau,
-                    bureau.getDesignation(), // ou autre propriété qui contient le nom du bureau
-                    dateRapport,
->>>>>>> Stashed changes
-                    mouvementDTOs,
-                    nombreComptes,
-                    montantTotal,
-                    joursAvant,
-                    montantMinimum
-            );
-
-<<<<<<< Updated upstream
-            // Return the result with correct pagination information for the UI
-            return new PageImpl<>(
-                    Collections.singletonList(rapport),    // A single report per page
-                    pageable,                              // Original pagination information
-                    mouvementsPage.getTotalElements()      // Total number of elements (movements)
-            );
-
-        } catch (EntityNotFoundException e) {
-            throw e; // Re-throw the already logged exception
-        } catch (Exception e) {
-            log.error("Erreur lors de la génération du rapport pour le bureau: {}", codeBureau, e);
-=======
-            // Créer une Page à partir du DTO créé
-            return new PageImpl<>(
-                    Collections.singletonList(rapportDTO),
-                    pageable,
-                    1 // un seul résultat
-            );
-        } catch (EntityNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
->>>>>>> Stashed changes
-            throw new ServiceException("Erreur lors de la génération du rapport: " + e.getMessage(), e);
+    public CompteMouvementVeilleDTO rapportMouvementVeille(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant, Pageable pageable) {
+        // Validation des paramètres
+        if (joursAvant == null || joursAvant < 1 || joursAvant > 2) {
+            joursAvant = 1; // Par défaut la veille
         }
+
+        if (montantMinimum == null || montantMinimum.compareTo(BigDecimal.ZERO) < 0) {
+            montantMinimum = BigDecimal.ZERO; // Par défaut tous les mouvements
+        }
+
+        // Calcul de la date du rapport
+        LocalDate dateRapport = LocalDate.now().minusDays(joursAvant);
+
+        // Récupération des informations de l'agence
+        Optional<BureauPosteCCP> bureauOpt = bureauPosteRepository.findById(codeBureau);
+        if (bureauOpt.isEmpty()) {
+            throw new IllegalArgumentException("Bureau de poste non trouvé avec code: " + codeBureau);
+        }
+        BureauPosteCCP bureau = bureauOpt.get();
+
+        // Conversion du codeBureau en BigDecimal pour la requête
+        BigDecimal codeBureauBD = new BigDecimal(codeBureau);
+
+        // Récupération des mouvements paginés
+        Page<MvtFinancierCCP> mouvementsPage = mvtFinancierRepository
+                .findPageByDateMouvementAndCodeBureauAndMontantMin(
+                        dateRapport,
+                        codeBureauBD,
+                        montantMinimum,
+                        pageable
+                );
+
+        // Conversion des entités en DTOs
+        Page<MouvementFinancierDTO> mouvementDTOs = mouvementsPage.map(mvtFinancierMapper::toMouvementFinancierDTO);
+
+        // Récupération des statistiques
+        MvtFinancierCCPRepository.MouvementStats stats = mvtFinancierRepository
+                .getStatistiques(dateRapport, codeBureauBD, montantMinimum);
+
+        // Création du rapport
+        return rapportCCPMapper.creerRapportMouvementVeille(
+                codeBureau,
+                bureau.getDesignation(),
+                dateRapport,
+                mouvementDTOs,
+                stats.getNombreComptes(),
+                stats.getMontantTotal(),
+                joursAvant,
+                montantMinimum
+        );
     }
 
+    /**
+     * Generates a global outstanding balance report for a specific bureau.
+     *
+     * @param codeBureau The code of the bureau for which the report is generated.
+     * @return A {@link NbrTotalEncoursCCPDTO} object containing the outstanding balance report.
+     */
     @Override
+    @Transactional(readOnly = true)
     public NbrTotalEncoursCCPDTO genererRapportEncoursGlobal(Long codeBureau) {
         return null;
     }
@@ -215,6 +161,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      * @throws RuntimeException        If an unexpected error occurs during report generation.
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<PortefeuilleClientCCPDTO> genererRapportPortefeuilleClient(Pageable pageable, Long codeBureau) {
         log.info("Generating report for bureau: {}", codeBureau);
         Objects.requireNonNull(codeBureau, "Code bureau cannot be null");
@@ -268,12 +215,13 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     }
 
     /**
-     * Génère un rapport des 100 plus grands comptes CCP par solde
+     * Generates a report of the top 100 CCP accounts by balance for a specific bureau.
      *
-     * @param codeBureau Code du bureau de poste
-     * @return Rapport des Top 100 comptes
+     * @param codeBureau The code of the bureau for which the report is generated.
+     * @return A {@link PortefeuilleClientCCP_Top100_DTO} object containing the top 100 accounts report.
      */
     @Override
+    @Transactional(readOnly = true)
     public PortefeuilleClientCCP_Top100_DTO genererRapportTop100(Long codeBureau) {
         return null;
     }
