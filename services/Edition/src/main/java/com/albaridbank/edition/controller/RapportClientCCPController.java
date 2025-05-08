@@ -22,9 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * REST controller for generating CCP reports.
@@ -124,7 +122,7 @@ public class RapportClientCCPController {
             @RequestParam(required = false, defaultValue = "0") BigDecimal montantMinimum,
             @RequestParam(required = false, defaultValue = "1") Integer joursAvant,
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "20") int size) {
+            @RequestParam(required = false, defaultValue = "10") int size) {
 
         log.info("Generating financial movements report for bureau: {}", codeAgence);
         log.info("Minimum amount: {}", montantMinimum);

@@ -77,7 +77,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      * Uses MapStruct for mapping and integrates pagination.
      *
      * @param codeBureau     The code of the bureau for which the report is generated.
-     * @param joursAvant     The number of days before today (1 for yesterday, 2 for the day before, etc.).
+     * @param joursAvant     The number of days before today (0 for to day, 1 for yesterday, 2 for the day before, etc.).
      * @param montantMinimum The minimum amount of movement to consider.
      * @param pageable       The pagination information for the list of movements.
      * @return A {@link CompteMouvementVeilleDTO} object containing the report with paginated financial movements.
@@ -87,7 +87,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     public CompteMouvementVeilleDTO rapportMouvementVeille(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant, Pageable pageable) {
         // Validation des paramètres
         if (joursAvant == null || joursAvant < 1 || joursAvant > 2) {
-            joursAvant = 1; // Par défaut la veille
+            joursAvant = 0; // Par défaut la veille
         }
 
         if (montantMinimum == null || montantMinimum.compareTo(BigDecimal.ZERO) < 0) {
