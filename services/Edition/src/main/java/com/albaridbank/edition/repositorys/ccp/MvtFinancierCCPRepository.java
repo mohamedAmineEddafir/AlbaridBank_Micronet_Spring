@@ -1,38 +1,30 @@
 package com.albaridbank.edition.repositorys.ccp;
 
-import com.albaridbank.edition.model.ccp.BureauPosteCCP;
 import com.albaridbank.edition.model.ccp.MvtFinancierCCP;
-import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Repository interface for managing {@link MvtFinancierCCP} entities.
  * Provides CRUD operations and custom query methods for financial movements.
+ * <p>
+ *  This interface extends JpaRepository and JpaSpecificationExecutor
+ *  to provide basic CRUD operations and support for JPA criteria queries.
+ * </p>
+ *
+ * @author Mohamed Amine Eddafir
  */
 @Repository
 public interface MvtFinancierCCPRepository extends JpaRepository<MvtFinancierCCP, Integer>, JpaSpecificationExecutor<MvtFinancierCCP> {
-
-    /**
-     * Finds financial movements for a specific date and post office.
-     *
-     * @param dateMouvement The date of the movements.
-     * @param bureauPoste   The post office entity.
-     * @return A list of financial movements for the specified date and post office.
-     */
-    @EntityGraph(attributePaths = {"compte", "typeOperation"})
-    List<MvtFinancierCCP> findByDateMouvementAndBureauPoste(LocalDate dateMouvement, BureauPosteCCP bureauPoste);
 
     /**
      * Finds all financial movements for a specific date and bureau code with a minimum amount.
