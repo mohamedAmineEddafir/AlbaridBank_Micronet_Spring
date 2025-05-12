@@ -61,7 +61,7 @@ logging:
 
 # Configuration pour les clients Feign
 customer-service:
-  url: http://localhost:8091/api/customer
+  url: http://localhost:8090/api/customer
 
 server:
   port: 8091
