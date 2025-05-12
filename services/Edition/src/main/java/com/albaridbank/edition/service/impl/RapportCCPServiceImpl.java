@@ -46,7 +46,6 @@ import java.util.*;
  * Pagination is supported for handling large datasets.
  *
  * @author Mohamed Amine Eddafir
- * 
  * @see RapportCCPService
  * @see MvtFinancierCCP
  * @see CompteCCP
@@ -70,7 +69,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     private final RapportCCPMapper rapportCCPMapper;
     private final CompteCCPMapper compteCCPMapper;
     private final BureauPosteCCPRepository bureauPosteRepository;
-    private final MvtFinancierCCPRepository  mvtFinancierRepository;
+    private final MvtFinancierCCPRepository mvtFinancierRepository;
 
     /**
      * Generates a paginated report of financial movements for a specific past date.
@@ -87,7 +86,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     public CompteMouvementVeilleDTO rapportMouvementVeille(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant, Pageable pageable) {
         // Validation des paramètres
         if (joursAvant == null || joursAvant < 1 || joursAvant > 2) {
-            joursAvant = 0; // Par défaut la veille
+            joursAvant = 0;
         }
 
         if (montantMinimum == null || montantMinimum.compareTo(BigDecimal.ZERO) < 0) {
@@ -152,6 +151,10 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      * Generates the CCP Client Portfolio report by retrieving all active accounts
      * for the specified bureau and applying the given pagination settings.
      *
+     * This method filters accounts based on their active status and the specified bureau,
+     * retrieves the accounts for the requested page, calculates global statistics, and maps
+     * the results into a DTO for the client portfolio report.
+     *
      * @param pageable   The pagination information to control the size and number of results.
      * @param codeBureau The code of the bureau for which the report is generated.
      *                   Must not be null.
@@ -180,6 +183,10 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             Page<CompteCCP> comptesPage = compteCCPRepository.findAll(specification, pageable);
             List<CompteCCP> comptes = comptesPage.getContent();
 
+            // Récupération des statistiques globales (indépendamment de la pagination)
+            CompteCCPRepository.PortefeuilleStats stats =
+                    compteCCPRepository.calculerStatistiquesPortefeuille(codeBureau, INACTIVE_STATES);
+
             // Map the accounts to their DTO representations
             List<CompteCCPDetailDTO> comptesDTO = compteCCPMapper.toCompteCCPDetailDTOList(comptes);
 
@@ -190,17 +197,13 @@ public class RapportCCPServiceImpl implements RapportCCPService {
                     .findFirst()
                     .orElse("Unknown Bureau");
 
-            // Calculate the total balance of the accounts on this page
-            BigDecimal sommeSolde = comptes.stream()
-                    .map(CompteCCP::getSoldeCourant)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            // Create the report DTO using the mapper
+            // Create the report DTO using the mapper with global totals
             PortefeuilleClientCCPDTO rapport = rapportCCPMapper.creerRapportPortefeuilleClient(
                     codeBureau,
                     designation,
                     comptesDTO,
-                    sommeSolde
+                    stats.getEncoursTotalComptes(),
+                    stats.getNombreTotalComptes()
             );
 
             // Return the report wrapped in a paginated response using the total count from comptesPage
