@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,8 @@ public class RapportClientCCPController {
      * @param codeBureau The identifier of the postal bureau.
      * @param page       The page number for pagination (default is 0).
      * @param size       The size of the page for pagination (default is 10).
+     * @param sortBy     The field to sort by (default is "codeProduit").
+     * @param sortDir    The sort direction (default is "asc").
      * @return A ResponseEntity containing the client portfolio report or an appropriate HTTP status.
      */
     @Operation(
@@ -65,27 +68,61 @@ public class RapportClientCCPController {
     public ResponseEntity<PortefeuilleClientCCPDTO> getRapportPortefeuilleClient(
             @PathVariable @Parameter(description = "Postal bureau identifier", required = true) Long codeBureau,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "codeProduit") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
-        log.info("Generating CCP Client Portfolio report for bureau: {}", codeBureau);
+        log.info("Generating CCP Client Portfolio report for bureau: {}, page: {}, size: {}, sort: {} {}",
+                codeBureau, page, size, sortBy, sortDir);
 
         try {
-            if (codeBureau == null) {
+            // Vérification de sécurité et audit
+            //String username = getCurrentUsername();
+            //log.info("Request initiated by user: {}", username);
+
+            // Validation des paramètres
+            if (page < 0 || size <= 0) {
+                log.warn("Invalid pagination parameters: page={}, size={}", page, size);
                 return ResponseEntity.badRequest().build();
             }
 
-            Pageable pageable = PageRequest.of(page, size, Sort.by("codeProduit").ascending());
+            // Création d'un objet de pagination avec tri dynamique
+            Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                    Sort.by(sortBy).descending() :
+                    Sort.by(sortBy).ascending();
+
+            Pageable pageable = PageRequest.of(page, size, sort);
+
+            // Appel au service
             Page<PortefeuilleClientCCPDTO> resultPage = rapportCCPService.genererRapportPortefeuilleClient(pageable, codeBureau);
 
+            // Vérification des résultats
             if (resultPage.isEmpty()) {
                 log.warn("No report found for bureau: {}", codeBureau);
                 return ResponseEntity.notFound().build();
             }
 
-            return ResponseEntity.ok(resultPage.getContent().getFirst());
+            // Ajout d'en-têtes supplémentaires pour la pagination
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("X-Total-Count", String.valueOf(resultPage.getTotalElements()));
+            headers.add("X-Total-Pages", String.valueOf(resultPage.getTotalPages()));
+
+            PortefeuilleClientCCPDTO rapport = resultPage.getContent().getFirst();
+
+            // Enrichir le rapport avec des métadonnées d'audit
+            //rapport.setCreatedBy(username);
+            //rapport.setCreationDateTime(LocalDateTime.now());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(rapport);
+
         } catch (EntityNotFoundException e) {
             log.error("Bureau not found: {}", codeBureau);
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid argument: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Error generating report for bureau: {}", codeBureau, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
