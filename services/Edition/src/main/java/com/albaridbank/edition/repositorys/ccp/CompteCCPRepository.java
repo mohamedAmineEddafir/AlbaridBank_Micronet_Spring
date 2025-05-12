@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -48,23 +49,25 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
     List<CompteCCP> findByBureauPoste_CodeBureauAndCodeEtatCompteNotInAndCodeProduitIn(Long codeBureauPoste, List<String> codeEtatCompte, List<Integer> codesProduit);
 
     /**
-     * Counts the number of active CCP accounts and calculates their total balance for a specific bureau.
-     *
-     * @param codeBureauPoste The code of the bureau.
-     * @param codeEtatCompte  A list of account statuses to exclude.
-     * @return An array containing the count of accounts and the sum of their balances.
+     * Interface de projection pour les statistiques des comptes
      */
-    @Query("SELECT COUNT(c), SUM(c.soldeCourant) FROM CompteCCP c WHERE c.bureauPoste.codeBureau = :codeBureauPoste AND c.codeEtatCompte NOT IN :codeEtatCompte")
-    Object[] countAndSumSoldeByBureauPosteAndActiveAccounts(@Param("codeBureauPoste") Long codeBureauPoste, @Param("codeEtatCompte") List<String> codeEtatCompte);
+    interface PortefeuilleStats {
+        Long getNombreTotalComptes();
+        BigDecimal getEncoursTotalComptes();
+    }
 
     /**
-     * Finds the top CCP accounts by balance for a specific bureau, excluding certain statuses.
+     * Calcule les statistiques globales pour les comptes actifs d'un bureau donné
      *
-     * @param codeBureauPoste The code of the bureau.
-     * @param codeEtatCompte  A list of account statuses to exclude.
-     * @param pageable        The pagination information to limit the number of results.
-     * @return A list of CCP accounts ordered by balance in descending order.
+     * @param codeBureauPoste Le code du bureau
+     * @param codeEtatCompte Liste des états de compte à exclure (inactifs)
+     * @return Les statistiques contenant le nombre total de comptes et la somme des soldes
      */
-    @Query(value = "SELECT c FROM CompteCCP c WHERE c.bureauPoste.codeBureau = :codeBureauPoste AND c.codeEtatCompte NOT IN :codeEtatCompte ORDER BY c.soldeCourant DESC")
-    List<CompteCCP> findTopNAccountsBySolde(@Param("codeBureauPoste") Long codeBureauPoste, @Param("codeEtatCompte") List<String> codeEtatCompte, Pageable pageable);
+    @Query("SELECT COUNT(c) as nombreTotalComptes, SUM(c.soldeCourant) as encoursTotalComptes " +
+            "FROM CompteCCP c " +
+            "WHERE c.bureauPoste.codeBureau = :codeBureauPoste " +
+            "AND c.codeEtatCompte NOT IN :codeEtatCompte")
+    PortefeuilleStats calculerStatistiquesPortefeuille(
+            @Param("codeBureauPoste") Long codeBureauPoste,
+            @Param("codeEtatCompte") List<String> codeEtatCompte);
 }
