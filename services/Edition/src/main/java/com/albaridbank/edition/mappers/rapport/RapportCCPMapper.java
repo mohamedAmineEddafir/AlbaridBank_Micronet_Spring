@@ -58,12 +58,13 @@ public interface RapportCCPMapper {
     @Mapping(target = "codburpo", source = "codeBureau")
     @Mapping(target = "desburpo", source = "designation")
     @Mapping(target = "comptes", source = "compteDTOs")
-    @Mapping(target = "nombreTotalComptes", expression = "java(compteDTOs.size())")
+    @Mapping(target = "nombreTotalComptes", source = "nombreTotalComptes")
     @Mapping(target = "encoursTotalComptes", source = "encoursTotal")
     PortefeuilleClientCCPDTO creerRapportPortefeuilleClient(
             Long codeBureau,
             String designation,
             List<CompteCCPDetailDTO> compteDTOs,
-            BigDecimal encoursTotal
+            BigDecimal encoursTotal,
+            Long nombreTotalComptes
     );
 }
