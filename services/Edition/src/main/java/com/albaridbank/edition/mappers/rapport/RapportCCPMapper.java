@@ -5,6 +5,7 @@ import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
+import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.CompteStats;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
 
@@ -41,18 +42,6 @@ public interface RapportCCPMapper {
             Integer joursAvant,
             BigDecimal montantMinimum);
 
-    @Mapping(target = "titreRapport", constant = "ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP")
-    @Mapping(target = "journeeDu", expression = "java(LocalDate.now())")
-    @Mapping(target = "codburpo", source = "codeBureau")
-    @Mapping(target = "desburpo", source = "desBureau")
-    @Mapping(target = "nombreComptes", source = "nombreComptes")
-    @Mapping(target = "totalEncours", source = "totalEncours")
-    NbrTotalEncoursCCPDTO creerRapportEncoursGlobal(
-            Long codeBureau,
-            String desBureau,
-            Long nombreComptes,
-            BigDecimal totalEncours);
-
     @Mapping(target = "titreRapport", constant = "ETAT PORTEFEUILLE CLIENT CCP")
     @Mapping(target = "dateEdition", expression = "java(java.time.LocalDateTime.parse(java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(\"dd/MM/yyyy HH:mm:ss\")), java.time.format.DateTimeFormatter.ofPattern(\"dd/MM/yyyy HH:mm:ss\")))")
     @Mapping(target = "codburpo", source = "codeBureau")
@@ -67,4 +56,50 @@ public interface RapportCCPMapper {
             BigDecimal encoursTotal,
             Long nombreTotalComptes
     );
+
+    /**
+     * <h4>ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP</h4>
+     * <p>
+     * Cette méthode est utilisée pour mapper les statistiques des comptes
+     * à un DTO spécifique pour le rapport.
+     * </p>
+     * <p>
+     * Elle est annotée avec {@Named} pour permettre
+     * son utilisation dans d'autres mappers.
+     * </p>
+     */
+    @Mapping(target = "titreRapport", constant = "ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP")
+    @Mapping(target = "codeBureau", source = "codburpo")
+    @Mapping(target = "designationBureau", source = "desburpo")
+    @Mapping(target = "journeeDu", expression = "java(LocalDate.now())")
+    @Mapping(target = "nombreComptes", source = "nombreTotalComptes")
+    @Mapping(target = "totalEncours", source = "totalEncours")
+    NbrTotalEncoursCCPDTO toDto(CompteStats stats);
+
+    /**
+     * Mapping pour un DTO vide
+     */
+    @Named("toEmptyDto")
+    @Mapping(target = "titreRapport", constant = "ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP")
+    @Mapping(target = "codeBureau", source = "codeBureau")
+    @Mapping(target = "designationBureau", constant = "")
+    @Mapping(target = "journeeDu", expression = "java(LocalDate.now())")
+    @Mapping(target = "nombreComptes", constant = "0L")
+    @Mapping(target = "totalEncours", expression = "java(BigDecimal.ZERO)")
+    NbrTotalEncoursCCPDTO toEmptyDto(Long codeBureau);
+
+    /**
+     * Méthode de compatibilité
+     */
+    @Mapping(target = "titreRapport", constant = "ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP")
+    @Mapping(target = "codeBureau", source = "codeBureau")
+    @Mapping(target = "designationBureau", source = "desBureau")
+    @Mapping(target = "journeeDu", expression = "java(LocalDate.now())")
+    @Mapping(target = "nombreComptes", source = "nombreComptes")
+    @Mapping(target = "totalEncours", source = "totalEncours")
+    NbrTotalEncoursCCPDTO creerRapportEncoursGlobal(
+            Long codeBureau,
+            String desBureau,
+            Long nombreComptes,
+            BigDecimal totalEncours);
 }
