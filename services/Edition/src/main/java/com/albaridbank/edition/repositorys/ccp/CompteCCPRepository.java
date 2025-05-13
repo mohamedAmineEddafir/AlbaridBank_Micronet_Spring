@@ -1,6 +1,7 @@
 package com.albaridbank.edition.repositorys.ccp;
 
 import com.albaridbank.edition.model.ccp.CompteCCP;
+import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.CompteStats;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for managing {@link CompteCCP} entities.
@@ -33,7 +35,7 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
      * Finds all CCP accounts associated with a specific bureau code with pagination.
      *
      * @param codeBureauPoste The code of the bureau.
-     * @param pageable The pagination information.
+     * @param pageable        The pagination information.
      * @return A page of CCP accounts for the specified bureau.
      */
     Page<CompteCCP> findByBureauPoste_CodeBureau(Long codeBureauPoste, Pageable pageable);
@@ -53,6 +55,7 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
      */
     interface PortefeuilleStats {
         Long getNombreTotalComptes();
+
         BigDecimal getEncoursTotalComptes();
     }
 
@@ -60,7 +63,7 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
      * Calcule les statistiques globales pour les comptes actifs d'un bureau donné
      *
      * @param codeBureauPoste Le code du bureau
-     * @param codeEtatCompte Liste des états de compte à exclure (inactifs)
+     * @param codeEtatCompte  Liste des états de compte à exclure (inactifs)
      * @return Les statistiques contenant le nombre total de comptes et la somme des soldes
      */
     @Query("SELECT COUNT(c) as nombreTotalComptes, SUM(c.soldeCourant) as encoursTotalComptes " +
@@ -68,6 +71,29 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
             "WHERE c.bureauPoste.codeBureau = :codeBureauPoste " +
             "AND c.codeEtatCompte NOT IN :codeEtatCompte")
     PortefeuilleStats calculerStatistiquesPortefeuille(
+            @Param("codeBureauPoste") Long codeBureauPoste,
+            @Param("codeEtatCompte") List<String> codeEtatCompte);
+
+    /**
+     * Calcule les statistiques globales pour les comptes actifs d'un bureau donné
+     *
+     * @param codeBureauPoste Le code du bureau
+     * @param codeEtatCompte  Liste des états de compte à exclure (inactifs)
+     * @return Les statistiques des comptes
+     */
+    @Query("""
+             SELECT 
+                 b.codeBureau as codburpo,
+                 b.designation as desburpo,
+                 COUNT(c) as nombreTotalComptes,
+                 SUM(c.soldeCourant) as totalEncours
+             FROM CompteCCP c
+             JOIN c.bureauPoste b
+             WHERE b.codeBureau = :codeBureauPoste
+             AND c.codeEtatCompte NOT IN :codeEtatCompte
+             GROUP BY b.codeBureau, b.designation
+            """)
+    Optional<CompteStats> calculerStatistiquesComptes(
             @Param("codeBureauPoste") Long codeBureauPoste,
             @Param("codeEtatCompte") List<String> codeEtatCompte);
 }
