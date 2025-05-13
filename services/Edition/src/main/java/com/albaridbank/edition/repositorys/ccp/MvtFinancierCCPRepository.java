@@ -17,8 +17,8 @@ import java.time.LocalDate;
  * Repository interface for managing {@link MvtFinancierCCP} entities.
  * Provides CRUD operations and custom query methods for financial movements.
  * <p>
- *  This interface extends JpaRepository and JpaSpecificationExecutor
- *  to provide basic CRUD operations and support for JPA criteria queries.
+ * This interface extends JpaRepository and JpaSpecificationExecutor
+ * to provide basic CRUD operations and support for JPA criteria queries.
  * </p>
  *
  * @author Mohamed Amine Eddafir
