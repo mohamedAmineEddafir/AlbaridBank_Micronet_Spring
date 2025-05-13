@@ -62,6 +62,11 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     private static final List<String> INACTIVE_STATES = List.of("C", "I", "B");
 
     /**
+     * List of inactive account states for global outstanding balance reports.
+     */
+    private static final List<String> ETATS_COMPTE_INACTIFS = List.of("C", "I");
+
+    /**
      * Dependencies injected via constructor.
      */
     private final MvtFinancierCCPMapper mvtFinancierMapper;
@@ -138,22 +143,47 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     /**
      * Generates a global outstanding balance report for a specific bureau.
      *
+     * <p>This method calculates the total outstanding balance and the number of accounts
+     * for a given bureau, excluding accounts in inactive states. If no data is found for
+     * the specified bureau, an empty DTO is returned.</p>
+     *
      * @param codeBureau The code of the bureau for which the report is generated.
+     *                   Must not be null.
      * @return A {@link NbrTotalEncoursCCPDTO} object containing the outstanding balance report.
+     * If no data is found, an empty DTO is returned.
+     * @throws NullPointerException If the provided bureau code is null.
+     * @throws RuntimeException     If an error occurs during the report generation process.
      */
     @Override
     @Transactional(readOnly = true)
     public NbrTotalEncoursCCPDTO genererRapportEncoursGlobal(Long codeBureau) {
-        return null;
+        log.info("Génération du rapport d'encours global pour le bureau: {}", codeBureau);
+
+        Objects.requireNonNull(codeBureau, "Le code du bureau ne peut pas être null");
+
+        try {
+            return compteCCPRepository.calculerStatistiquesComptes(codeBureau, ETATS_COMPTE_INACTIFS)
+                    .map(rapportCCPMapper::toDto)
+                    .orElseGet(() -> {
+                        log.warn("Aucune donnée trouvée pour le bureau: {}", codeBureau);
+                        return rapportCCPMapper.toEmptyDto(codeBureau);
+                    });
+
+        } catch (Exception e) {
+            log.error("Erreur lors de la génération du rapport d'encours pour le bureau {}: {}",
+                    codeBureau, e.getMessage());
+            throw new RuntimeException("Erreur lors de la génération du rapport d'encours", e);
+        }
     }
 
     /**
      * Generates the CCP Client Portfolio report by retrieving all active accounts
      * for the specified bureau and applying the given pagination settings.
-     *
+     * <p>
      * This method filters accounts based on their active status and the specified bureau,
      * retrieves the accounts for the requested page, calculates global statistics, and maps
      * the results into a DTO for the client portfolio report.
+     * </p>
      *
      * @param pageable   The pagination information to control the size and number of results.
      * @param codeBureau The code of the bureau for which the report is generated.

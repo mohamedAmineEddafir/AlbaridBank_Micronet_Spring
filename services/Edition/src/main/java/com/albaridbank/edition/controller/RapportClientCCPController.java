@@ -4,6 +4,8 @@ import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
 import com.albaridbank.edition.service.interfaces.RapportCCPService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * REST controller for generating CCP reports.
@@ -42,7 +43,7 @@ import java.util.List;
 public class RapportClientCCPController {
 
     private final RapportCCPService rapportCCPService;
-    private static final List<String> VALID_SORT_PROPERTIES = List.of("dateCreation", "montant", "dateMouvement");
+    //private static final List<String> VALID_SORT_PROPERTIES = List.of("dateCreation", "montant", "dateMouvement");
 
     /**
      * Generates a report on the client portfolio status for a specific bureau.
@@ -109,9 +110,11 @@ public class RapportClientCCPController {
 
             PortefeuilleClientCCPDTO rapport = resultPage.getContent().getFirst();
 
-            // Enrichir le rapport avec des métadonnées d'audit
-            //rapport.setCreatedBy(username);
-            //rapport.setCreationDateTime(LocalDateTime.now());
+            /*
+                // Enrichir le rapport avec des métadonnées d'audit
+                rapport.setCreatedBy(username);
+                rapport.setCreationDateTime(LocalDateTime.now());
+            **/
 
             return ResponseEntity.ok()
                     .headers(headers)
@@ -185,31 +188,42 @@ public class RapportClientCCPController {
     }
 
     /**
-     * Generates a global balance report for a specific bureau.
+     * Endpoint to retrieve the total number of accounts and the global outstanding balance for a specific CCP bureau.
      *
-     * @param codeBureau The postal bureau code.
-     * @return A ResponseEntity containing the global balance report or an appropriate HTTP status.
+     * <p>This method fetches global statistics for CCP accounts associated with a given postal bureau.
+     * It returns the total number of accounts and the total outstanding balance in a DTO format.
+     *
+     * @param codeBureau The identifier of the postal bureau for which the statistics are retrieved.
+     *
+     * @return A {@link ResponseEntity} containing a {@link NbrTotalEncoursCCPDTO} object with the statistics.
+     * If the bureau is not found, a 404 status is returned.
      */
     @Operation(
-            summary = "Generate global balance report",
-            description = "Retrieves the global balance report for a specific bureau"
+            summary = "Obtenir le nombre total de comptes et l'encours global CCP",
+            description = "Récupère les statistiques globales des comptes CCP pour un bureau de poste spécifique"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Report successfully generated"),
-            @ApiResponse(responseCode = "404", description = "Bureau not found"),
-            @ApiResponse(responseCode = "501", description = "Feature not implemented")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Statistiques trouvées",
+                    content = @Content(
+                            schema = @Schema(implementation = NbrTotalEncoursCCPDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Bureau non trouvé",
+                    content = @Content
+            )
     })
     @GetMapping("/encours-global/{codeBureau}")
-    public ResponseEntity<NbrTotalEncoursCCPDTO> getRapportEncoursGlobal(
+    public ResponseEntity<NbrTotalEncoursCCPDTO> getEncoursGlobal(
+            @Parameter(
+                    description = "Code du bureau de poste (Agence)",
+                    example = "12345",
+                    required = true
+            )
             @PathVariable Long codeBureau) {
-
-        log.info("Requesting global balance report for bureau: {}", codeBureau);
-        NbrTotalEncoursCCPDTO rapport = rapportCCPService.genererRapportEncoursGlobal(codeBureau);
-
-        if (rapport == null) {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
-        }
-
-        return ResponseEntity.ok(rapport);
+        return ResponseEntity.ok(rapportCCPService.genererRapportEncoursGlobal(codeBureau));
     }
 }
