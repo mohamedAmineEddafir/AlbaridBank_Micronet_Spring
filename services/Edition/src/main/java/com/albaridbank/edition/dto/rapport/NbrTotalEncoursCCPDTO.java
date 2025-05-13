@@ -9,6 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @SuperBuilder
@@ -21,13 +22,11 @@ public class NbrTotalEncoursCCPDTO implements Serializable {
 
     // Informations d'en-tête
     private String titreRapport;
+    private Long codeBureau;
+    private String designationBureau;
     private LocalDate journeeDu;
 
-    // Informations de l'agence
-    private Long codburpo;
-    private String desburpo;
-
     // Données du rapport
-    private Long nombreComptes;     // ID_count____
-    private BigDecimal totalEncours; // ID_sum_
+    private Long nombreComptes; // ID_count
+    private BigDecimal totalEncours; // ID_sum
 }
