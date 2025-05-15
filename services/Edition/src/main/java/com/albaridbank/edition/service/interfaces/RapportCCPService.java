@@ -1,9 +1,6 @@
 package com.albaridbank.edition.service.interfaces;
 
-import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
-import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
-import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
-import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCP_Top100_DTO;
+import com.albaridbank.edition.dto.rapport.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -46,6 +43,23 @@ public interface RapportCCPService {
      * @return Rapport du portefeuille client
      */
     Page<PortefeuilleClientCCPDTO> genererRapportPortefeuilleClient(Pageable pageable, Long codeBureau);
+
+    /**
+     * Génère le rapport détaillé du portefeuille client CCP pour une agence donnée avec filtres
+     *
+     * @param codeBureau code de l'agence
+     * @param pageable   pagination des résultats
+     * @param typeCompte type de compte (1: Normal, 2: Dirham Convertible, null: tous)
+     * @param etatCompte état du compte (A : Actif, I : Inactif, etc., null : tous)
+     * @return DTO contenant les informations du rapport
+     * @throws IllegalArgumentException si le code bureau est null
+     */
+    PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientFiltre(
+            Long codeBureau,
+            Pageable pageable,
+            Integer typeCompte,
+            String etatCompte
+    );
 
     /**
      * Génère un rapport des 100 plus grands comptes CCP par solde

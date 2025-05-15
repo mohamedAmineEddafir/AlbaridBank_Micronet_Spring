@@ -2,10 +2,8 @@ package com.albaridbank.edition.service.impl;
 
 import com.albaridbank.edition.dto.base.CompteCCPDetailDTO;
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
-import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
-import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
-import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
-import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCP_Top100_DTO;
+import com.albaridbank.edition.dto.base.PortefeuilleClientCCPDetailDTO;
+import com.albaridbank.edition.dto.rapport.*;
 import com.albaridbank.edition.mappers.ccp.MvtFinancierCCPMapper;
 import com.albaridbank.edition.model.ccp.BureauPosteCCP;
 import com.albaridbank.edition.model.ccp.CompteCCP;
@@ -13,6 +11,7 @@ import com.albaridbank.edition.model.ccp.MvtFinancierCCP;
 import com.albaridbank.edition.repositorys.ccp.CompteCCPRepository;
 import com.albaridbank.edition.repositorys.ccp.BureauPosteCCPRepository;
 import com.albaridbank.edition.repositorys.ccp.MvtFinancierCCPRepository;
+import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.PortefeuilleStats;
 import com.albaridbank.edition.service.interfaces.RapportCCPService;
 import com.albaridbank.edition.mappers.rapport.RapportCCPMapper;
 import com.albaridbank.edition.mappers.ccp.CompteCCPMapper;
@@ -23,12 +22,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service implementation for generating CCP reports.
@@ -54,6 +56,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RapportCCPServiceImpl implements RapportCCPService {
 
     /**
@@ -64,7 +67,12 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     /**
      * List of inactive account states for global outstanding balance reports.
      */
-    private static final List<String> ETATS_COMPTE_INACTIFS = List.of("C", "I");
+    private static final List<String> ETATS_COMPTES_EXCLUS = List.of("C", "I");
+
+    /**
+     * List of product types for filtering accounts.
+     */
+    private static final List<Integer> TYPES_PRODUITS = Arrays.asList(1, 2, 3, 4);
 
     /**
      * Dependencies injected via constructor.
@@ -162,7 +170,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
         Objects.requireNonNull(codeBureau, "Le code du bureau ne peut pas être null");
 
         try {
-            return compteCCPRepository.calculerStatistiquesComptes(codeBureau, ETATS_COMPTE_INACTIFS)
+            return compteCCPRepository.calculerStatistiquesComptes(codeBureau, ETATS_COMPTES_EXCLUS)
                     .map(rapportCCPMapper::toDto)
                     .orElseGet(() -> {
                         log.warn("Aucune donnée trouvée pour le bureau: {}", codeBureau);
@@ -214,7 +222,7 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             List<CompteCCP> comptes = comptesPage.getContent();
 
             // Récupération des statistiques globales (indépendamment de la pagination)
-            CompteCCPRepository.PortefeuilleStats stats =
+            PortefeuilleStats stats =
                     compteCCPRepository.calculerStatistiquesPortefeuille(codeBureau, INACTIVE_STATES);
 
             // Map the accounts to their DTO representations
@@ -257,5 +265,64 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     @Transactional(readOnly = true)
     public PortefeuilleClientCCP_Top100_DTO genererRapportTop100(Long codeBureau) {
         return null;
+    }
+
+    /**
+     * Generates a detailed client portfolio report for a specific bureau with optional filters.
+     *
+     * <p>This method retrieves CCP accounts for a given bureau, applies optional filters
+     * for account type and state, calculates portfolio statistics, and maps the results
+     * into a detailed DTO for the client portfolio report.</p>
+     *
+     * @param codeBureau The code of the bureau for which the report is generated.
+     *                   Must not be null.
+     * @param pageable   The pagination information to control the size and number of results.
+     * @param typeCompte An optional filter for the type of account. Can be null.
+     * @param etatCompte An optional filter for the state of the account. Can be null.
+     * @return A {@link PortefeuilleClientCCPRapportDTO} object containing the detailed client portfolio report.
+     * @throws IllegalArgumentException If the provided bureau code is null.
+     * @throws ResponseStatusException  If the specified bureau is not found.
+     */
+    @Override
+    public PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientFiltre(
+            Long codeBureau,
+            Pageable pageable,
+            Integer typeCompte,
+            String etatCompte
+    ) {
+        if (codeBureau == null) {
+            throw new IllegalArgumentException("Bureau code cannot be null");
+        }
+
+        log.debug("Generating client portfolio report for bureau: {}, type: {}, state: {}",
+                codeBureau, typeCompte, etatCompte);
+
+        BureauPosteCCP bureauPoste = bureauPosteRepository.findByCodeBureau(codeBureau)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Bureau not found with code: " + codeBureau));
+
+        List<String> excludedStates = etatCompte == null
+                ? new ArrayList<>(ETATS_COMPTES_EXCLUS)
+                : ETATS_COMPTES_EXCLUS.stream()
+                .filter(state -> !state.equals(etatCompte))
+                .collect(Collectors.toList());
+
+        Page<CompteCCP> comptesPage = compteCCPRepository.findPortefeuilleClientsByBureauWithFilters(
+                codeBureau, excludedStates, typeCompte, pageable);
+
+        PortefeuilleStats stats = compteCCPRepository.calculerStatistiquesPortefeuilleDetail(
+                codeBureau,
+                excludedStates,
+                typeCompte != null ? typeCompte : TYPES_PRODUITS.getFirst());
+
+        List<PortefeuilleClientCCPDetailDTO> comptesDTO = comptesPage.getContent().stream()
+                .map(rapportCCPMapper::toDetailDTO)
+                .collect(Collectors.toList());
+
+        return rapportCCPMapper.creerRapportPortefeuilleDetaillee(
+                bureauPoste.getCodeBureau(),
+                bureauPoste.getDesignation(),
+                comptesDTO,
+                stats);
     }
 }
