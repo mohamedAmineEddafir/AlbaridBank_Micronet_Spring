@@ -2,6 +2,7 @@ package com.albaridbank.edition.repositorys.ccp;
 
 import com.albaridbank.edition.model.ccp.CompteCCP;
 import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.CompteStats;
+import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.PortefeuilleStats;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,42 +22,6 @@ import java.util.Optional;
  */
 @Repository
 public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, JpaSpecificationExecutor<CompteCCP> {
-
-    /**
-     * Finds all CCP accounts associated with a specific bureau code.
-     *
-     * @param codeBureauPoste The code of the bureau.
-     * @return A list of CCP accounts for the specified bureau.
-     */
-    List<CompteCCP> findByBureauPoste_CodeBureau(Long codeBureauPoste);
-
-    /**
-     * Finds all CCP accounts associated with a specific bureau code with pagination.
-     *
-     * @param codeBureauPoste The code of the bureau.
-     * @param pageable        The pagination information.
-     * @return A page of CCP accounts for the specified bureau.
-     */
-    Page<CompteCCP> findByBureauPoste_CodeBureau(Long codeBureauPoste, Pageable pageable);
-
-    /**
-     * Finds CCP accounts for a specific bureau code, excluding certain statuses and filtering by product codes.
-     *
-     * @param codeBureauPoste The code of the bureau.
-     * @param codeEtatCompte  A list of account statuses to exclude.
-     * @param codesProduit    A list of product codes to include.
-     * @return A list of CCP accounts matching the criteria.
-     */
-    List<CompteCCP> findByBureauPoste_CodeBureauAndCodeEtatCompteNotInAndCodeProduitIn(Long codeBureauPoste, List<String> codeEtatCompte, List<Integer> codesProduit);
-
-    /**
-     * Interface de projection pour les statistiques des comptes
-     */
-    interface PortefeuilleStats {
-        Long getNombreTotalComptes();
-
-        BigDecimal getEncoursTotalComptes();
-    }
 
     /**
      * Calcule les statistiques globales pour les comptes actifs d'un bureau donné
@@ -82,7 +46,7 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
      * @return Les statistiques des comptes
      */
     @Query("""
-             SELECT 
+             SELECT
                  b.codeBureau as codburpo,
                  b.designation as desburpo,
                  COUNT(c) as nombreTotalComptes,
@@ -96,4 +60,39 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
     Optional<CompteStats> calculerStatistiquesComptes(
             @Param("codeBureauPoste") Long codeBureauPoste,
             @Param("codeEtatCompte") List<String> codeEtatCompte);
+
+    @Query("SELECT c FROM CompteCCP c " +
+            "JOIN FETCH c.client cl " +
+            "JOIN FETCH cl.categorieSocioProfessionnelle csp " +
+            "JOIN FETCH c.bureauPoste bp " +
+            "WHERE c.bureauPoste.codeBureau = :codeBureau " +
+            "AND c.codeEtatCompte NOT IN :etatsExclus " +
+            "AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte) " +
+            "ORDER BY c.soldeCourant DESC")
+    Page<CompteCCP> findPortefeuilleClientsByBureauWithFilters(
+            @Param("codeBureau") Long codeBureau,
+            @Param("etatsExclus") List<String> etatsExclus,
+            @Param("typeCompte") Integer typeCompte,
+            Pageable pageable);
+
+    @Query("""
+            SELECT
+                COUNT(c) as nombreTotalComptes,
+                SUM(c.soldeCourant) as encoursTotalComptes,
+                SUM(c.soldeOpposition) as totalSoldeOpposition,
+                SUM(c.soldeTaxe) as totalSoldeTaxe,
+                SUM(c.soldeDebitOperations) as totalSoldeDebitOperations,
+                SUM(c.soldeCreditOperations) as totalSoldeCreditOperations,
+                SUM(c.soldeOperationsPeriode) as totalSoldeOperationsPeriode,
+                SUM(c.soldeCertifie) as totalSoldeCertifie
+            FROM CompteCCP c
+            WHERE c.bureauPoste.codeBureau = :codeBureau
+            AND c.codeEtatCompte NOT IN :etatsExclus
+            AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
+            """)
+    PortefeuilleStats calculerStatistiquesPortefeuilleDetail(
+            @Param("codeBureau") Long codeBureau,
+            @Param("etatsExclus") List<String> etatsExclus,
+            @Param("typeCompte") Integer typeCompte
+    );
 }
