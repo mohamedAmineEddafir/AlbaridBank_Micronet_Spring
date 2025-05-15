@@ -61,38 +61,41 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
             @Param("codeBureauPoste") Long codeBureauPoste,
             @Param("codeEtatCompte") List<String> codeEtatCompte);
 
-    @Query("SELECT c FROM CompteCCP c " +
-            "JOIN FETCH c.client cl " +
-            "JOIN FETCH cl.categorieSocioProfessionnelle csp " +
-            "JOIN FETCH c.bureauPoste bp " +
-            "WHERE c.bureauPoste.codeBureau = :codeBureau " +
-            "AND c.codeEtatCompte NOT IN :etatsExclus " +
-            "AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte) " +
-            "ORDER BY c.soldeCourant DESC")
+    @Query("""
+                SELECT c FROM CompteCCP c
+                JOIN FETCH c.client cl
+                JOIN FETCH cl.categorieSocioProfessionnelle csp
+                JOIN FETCH c.bureauPoste bp
+                WHERE c.bureauPoste.codeBureau = :codeBureau
+                AND (:etatCompte IS NULL OR c.codeEtatCompte = :etatCompte)
+                AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
+                ORDER BY c.soldeCourant DESC
+            """)
     Page<CompteCCP> findPortefeuilleClientsByBureauWithFilters(
             @Param("codeBureau") Long codeBureau,
-            @Param("etatsExclus") List<String> etatsExclus,
+            @Param("etatCompte") String etatCompte,
             @Param("typeCompte") Integer typeCompte,
-            Pageable pageable);
+            Pageable pageable
+    );
 
     @Query("""
-            SELECT
-                COUNT(c) as nombreTotalComptes,
-                SUM(c.soldeCourant) as encoursTotalComptes,
-                SUM(c.soldeOpposition) as totalSoldeOpposition,
-                SUM(c.soldeTaxe) as totalSoldeTaxe,
-                SUM(c.soldeDebitOperations) as totalSoldeDebitOperations,
-                SUM(c.soldeCreditOperations) as totalSoldeCreditOperations,
-                SUM(c.soldeOperationsPeriode) as totalSoldeOperationsPeriode,
-                SUM(c.soldeCertifie) as totalSoldeCertifie
-            FROM CompteCCP c
-            WHERE c.bureauPoste.codeBureau = :codeBureau
-            AND c.codeEtatCompte NOT IN :etatsExclus
-            AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
+                SELECT
+                    COUNT(c) as nombreTotalComptes,
+                    SUM(c.soldeCourant) as encoursTotalComptes,
+                    SUM(c.soldeOpposition) as totalSoldeOpposition,
+                    SUM(c.soldeTaxe) as totalSoldeTaxe,
+                    SUM(c.soldeDebitOperations) as totalSoldeDebitOperations,
+                    SUM(c.soldeCreditOperations) as totalSoldeCreditOperations,
+                    SUM(c.soldeOperationsPeriode) as totalSoldeOperationsPeriode,
+                    SUM(c.soldeCertifie) as totalSoldeCertifie
+                FROM CompteCCP c
+                WHERE c.bureauPoste.codeBureau = :codeBureau
+                AND (:etatCompte IS NULL OR c.codeEtatCompte = :etatCompte)
+                AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
             """)
     PortefeuilleStats calculerStatistiquesPortefeuilleDetail(
             @Param("codeBureau") Long codeBureau,
-            @Param("etatsExclus") List<String> etatsExclus,
+            @Param("etatCompte") String etatCompte,
             @Param("typeCompte") Integer typeCompte
     );
 }
