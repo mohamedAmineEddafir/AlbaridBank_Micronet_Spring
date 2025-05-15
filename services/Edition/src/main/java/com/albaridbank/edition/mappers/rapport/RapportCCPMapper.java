@@ -2,10 +2,16 @@ package com.albaridbank.edition.mappers.rapport;
 
 import com.albaridbank.edition.dto.base.CompteCCPDetailDTO;
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
+import com.albaridbank.edition.dto.base.PortefeuilleClientCCPDetailDTO;
 import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
+import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPRapportDTO;
+import com.albaridbank.edition.mappers.ccp.CompteCCPMapper;
+import com.albaridbank.edition.mappers.util.MapperUtil;
+import com.albaridbank.edition.model.ccp.CompteCCP;
 import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.CompteStats;
+import com.albaridbank.edition.repositorys.ccp.projectionCCPRepo.PortefeuilleStats;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
 
@@ -16,7 +22,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        imports = {LocalDate.class, LocalDateTime.class, BigDecimal.class})
+        imports = {LocalDate.class, LocalDateTime.class, BigDecimal.class, MapperUtil.class},
+        uses = {CompteCCPMapper.class})
 public interface RapportCCPMapper {
 
     @Mapping(target = "titreRapport", expression = "java(\"ETAT DES COMPTES MOUVEMENTEES \" + (joursAvant == 1 ? \"LA VEILLE\" : \"L'AVANT VEILLE\"))")
@@ -102,4 +109,65 @@ public interface RapportCCPMapper {
             String desBureau,
             Long nombreComptes,
             BigDecimal totalEncours);
+
+    @Mapping(target = "titreRapport", constant = "ETAT PORTE FEUILLE CLIENT CCP")
+    @Mapping(target = "dateEdition", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "numeroPage", constant = "1")
+    @Mapping(target = "codburpo", source = "codeBureau")
+    @Mapping(target = "desburpo", source = "designation")
+    @Mapping(target = "comptes", source = "comptes")
+    @Mapping(target = "nombreTotalComptes", source = "stats.nombreTotalComptes")
+    @Mapping(target = "encoursTotalComptes", source = "stats.encoursTotalComptes")
+    @Mapping(target = "totalSoldeOpposition", source = "stats.totalSoldeOpposition")
+    @Mapping(target = "totalSoldeTaxe", source = "stats.totalSoldeTaxe")
+    @Mapping(target = "totalSoldeDebitOperations", source = "stats.totalSoldeDebitOperations")
+    @Mapping(target = "totalSoldeCreditOperations", source = "stats.totalSoldeCreditOperations")
+    @Mapping(target = "totalSoldeOperationsPeriode", source = "stats.totalSoldeOperationsPeriode")
+    @Mapping(target = "totalSoldeCertifie", source = "stats.totalSoldeCertifie")
+    PortefeuilleClientCCPRapportDTO creerRapportPortefeuilleDetaillee(
+            Long codeBureau,
+            String designation,
+            List<PortefeuilleClientCCPDetailDTO> comptes,
+            PortefeuilleStats stats
+    );
+
+    @Named("toPortefeuilleDetailDTO")
+    @Mapping(source = "idCompte", target = "idencomp")
+    @Mapping(source = "intitule", target = "inticomp")
+    @Mapping(source = "adresse", target = "adrecomp")
+    @Mapping(source = "codePostal", target = "codepost")
+    @Mapping(source = "intituleCondense", target = "inticond")
+    @Mapping(source = "client.categorieSocioProfessionnelle.libelle", target = "libsocpr")
+    @Mapping(source = "client.numeroPieceIdentite", target = "numpieid")
+    @Mapping(source = "client.telephone", target = "numetele")
+    @Mapping(source = "codeEtatCompte", target = "etatCompte", qualifiedByName = "formatEtatCompte")
+    @Mapping(source = "client.dateNaissance", target = "datenais")
+    @Mapping(source = "soldeCourant", target = "soldcour")
+    @Mapping(source = "soldeOpposition", target = "soldoppo")
+    @Mapping(source = "soldeTaxe", target = "soldtaxe")
+    @Mapping(source = "soldeDebitOperations", target = "solddebo")
+    @Mapping(source = "soldeCreditOperations", target = "solddeco")
+    @Mapping(source = "soldeOperationsPeriode", target = "solopede")
+    @Mapping(source = "soldeCertifie", target = "soldcert")
+    @Mapping(source = "dateSolde", target = "datesold")
+    @Mapping(source = "codeProduit", target = "comptetyp")
+    @Mapping(source = "codeProduit", target = "typeCompteLibelle", qualifiedByName = "formatTypeCompte")
+    PortefeuilleClientCCPDetailDTO toDetailDTO(CompteCCP compte);
+
+    @Named("formatTypeCompte")
+    default String formatTypeCompte(Integer codeProduit) {
+        if (codeProduit == null) return "Normal";
+        return switch (codeProduit) {
+            case 1 -> "Normal";
+            case 2 -> "Oppose";
+            case 3 -> "Cloture";
+            case 4 -> "Blocage";
+            default -> "Inconnu";
+        };
+    }
+
+    @Named("formatEtatCompte")
+    default String formatEtatCompte(String codeEtatCompte) {
+        return MapperUtil.mapEtatCompteCCP(codeEtatCompte);
+    }
 }
