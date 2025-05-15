@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
@@ -42,6 +43,16 @@ import org.springframework.data.domain.Page;
         uses = {CompteCCPMapper.class}
 )
 public interface RapportCCPMapper {
+
+    /**
+     * Mapping des états de compte
+     */
+    Map<String, String> ETATS_MAPPING = Map.of(
+            "N", "Normal",
+            "O", "Oppose",
+            "C", "Cloture",
+            "B", "Blocage"
+    );
 
     /**
      * Crée un rapport des mouvements de la veille
@@ -90,7 +101,7 @@ public interface RapportCCPMapper {
     );
 
     /**
-     * Crée un rapport détaillé du portefeuille client CCP
+     * Creates a detailed portfolio report DTO from various sources.
      */
     @Mapping(target = "titreRapport", constant = "ETAT PORTE FEUILLE CLIENT M CCP")
     @Mapping(target = "dateEdition",
@@ -100,7 +111,6 @@ public interface RapportCCPMapper {
     @Mapping(target = "codburpo", source = "codeBureau")
     @Mapping(target = "desburpo", source = "designation")
     @Mapping(target = "comptes", source = "comptes")
-    //@Mapping(target = "createdBy", constant = "mohamedAmineEddafir")
     @Mapping(target = "nombreTotalComptes", source = "stats.nombreTotalComptes")
     @Mapping(target = "encoursTotalComptes", source = "stats.encoursTotalComptes")
     @Mapping(target = "totalSoldeOpposition", source = "stats.totalSoldeOpposition")
@@ -156,7 +166,7 @@ public interface RapportCCPMapper {
     );
 
     /**
-     * Convertit un CompteCCP en PortefeuilleClientCCPDetailDTO
+     * Maps a CompteCCP entity to its DTO representation.
      */
     @Named("toPortefeuilleDetailDTO")
     @Mapping(source = "idCompte", target = "idencomp")
@@ -167,7 +177,8 @@ public interface RapportCCPMapper {
     @Mapping(source = "client.categorieSocioProfessionnelle.libelle", target = "libsocpr")
     @Mapping(source = "client.numeroPieceIdentite", target = "numpieid")
     @Mapping(source = "client.telephone", target = "numetele")
-    @Mapping(source = "codeEtatCompte", target = "etatCompte", qualifiedByName = "rapportFormatEtatCompte")
+    @Mapping(source = "codeEtatCompte", target = "etatCompte")
+    @Mapping(source = "codeEtatCompte", target = "typeCompteLibelle", qualifiedByName = "formatEtatCompteRapport")
     @Mapping(source = "client.dateNaissance", target = "datenais")
     @Mapping(source = "soldeCourant", target = "soldcour")
     @Mapping(source = "soldeOpposition", target = "soldoppo")
@@ -178,29 +189,28 @@ public interface RapportCCPMapper {
     @Mapping(source = "soldeCertifie", target = "soldcert")
     @Mapping(source = "dateSolde", target = "datesold")
     @Mapping(source = "codeProduit", target = "comptetyp")
-    @Mapping(source = "codeProduit", target = "typeCompteLibelle", qualifiedByName = "formatTypeCompte")
     PortefeuilleClientCCPDetailDTO toDetailDTO(CompteCCP compte);
 
     /**
-     * Formate le type de compte
+     * Formats the account state code to its display label.
      */
-    @Named("formatTypeCompte")
-    default String formatTypeCompte(Integer codeProduit) {
-        if (codeProduit == null) return "Normal";
-        return switch (codeProduit) {
-            case 1 -> "Normal";
-            case 2 -> "Oppose";
-            case 3 -> "Cloture";
-            case 4 -> "Blocage";
-            default -> "Inconnu";
-        };
+    @Named("formatEtatCompteRapport")
+    default String formatEtatCompteRapport(String codeEtatCompte) {
+        if (codeEtatCompte == null) return "Inconnu";
+        return ETATS_MAPPING.getOrDefault(codeEtatCompte.toUpperCase(), "Inconnu");
     }
 
     /**
-     * Formate l'état du compte
+     * After mapping, ensure all BigDecimal fields are properly initialized.
      */
-    @Named("rapportFormatEtatCompte")
-    default String rapportFormatEtatCompte(String codeEtatCompte) {
-        return MapperUtil.mapEtatCompteCCP(codeEtatCompte);
+    @AfterMapping
+    default void setDefaultValues(@MappingTarget PortefeuilleClientCCPDetailDTO dto) {
+        if (dto.getSoldcour() == null) dto.setSoldcour(BigDecimal.ZERO);
+        if (dto.getSoldoppo() == null) dto.setSoldoppo(BigDecimal.ZERO);
+        if (dto.getSoldtaxe() == null) dto.setSoldtaxe(BigDecimal.ZERO);
+        if (dto.getSolddebo() == null) dto.setSolddebo(BigDecimal.ZERO);
+        if (dto.getSolddeco() == null) dto.setSolddeco(BigDecimal.ZERO);
+        if (dto.getSolopede() == null) dto.setSolopede(BigDecimal.ZERO);
+        if (dto.getSoldcert() == null) dto.setSoldcert(BigDecimal.ZERO);
     }
 }
