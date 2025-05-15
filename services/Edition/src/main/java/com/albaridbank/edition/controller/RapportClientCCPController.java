@@ -3,6 +3,7 @@ package com.albaridbank.edition.controller;
 import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
+import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPRapportDTO;
 import com.albaridbank.edition.service.interfaces.RapportCCPService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,16 +23,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
 /**
+ * <p>
  * REST controller for generating CCP reports.
  * Provides endpoints for generating client portfolio, financial movements, and global balance reports.
  * Includes Swagger annotations for API documentation.
- * <p>
- *
+ * </p>
  * @author Mohamed Amine Eddafir
  */
 @RestController
@@ -194,7 +196,6 @@ public class RapportClientCCPController {
      * It returns the total number of accounts and the total outstanding balance in a DTO format.
      *
      * @param codeBureau The identifier of the postal bureau for which the statistics are retrieved.
-     *
      * @return A {@link ResponseEntity} containing a {@link NbrTotalEncoursCCPDTO} object with the statistics.
      * If the bureau is not found, a 404 status is returned.
      */
@@ -226,4 +227,106 @@ public class RapportClientCCPController {
             @PathVariable Long codeBureau) {
         return ResponseEntity.ok(rapportCCPService.genererRapportEncoursGlobal(codeBureau));
     }
+
+    /**
+     * Endpoint to generate a detailed client portfolio report for a specific bureau.
+     *
+     * <p>This method allows filtering by account type and state, with pagination support.
+     * The results are sorted by the current balance in descending order by default.</p>
+     *
+     * @param codeBureau The identifier of the postal bureau. This parameter is required.
+     * @param typeCompte An optional filter for the type of account:
+     *                   1: Normal
+     *                   2: Oppose
+     *                   3: Cloturé
+     *                   4: Bloqué
+     *                   null: All types.
+     * @param etatCompte An optional filter for the account state (ACTIF/INACTIF).
+     * @param page       The page number for pagination (default is 0).
+     * @param size       The number of items per page for pagination (default is 20).
+     * @return A {@link ResponseEntity} containing a {@link PortefeuilleClientCCPRapportDTO} object
+     * with the detailed client portfolio report.
+     */
+    @Operation(
+            summary = "Générer un rapport détaillé du portefeuille client",
+            description = """
+                    Génère un rapport détaillé du portefeuille client CCP pour un bureau spécifique.
+                    Permet de filtrer par type de compte et état, avec pagination des résultats.
+                    Les résultats sont triés par solde courant par défaut.
+                    """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Rapport généré avec succès",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PortefeuilleClientCCPRapportDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Paramètres invalides",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Bureau non trouvé",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    @GetMapping("/portefeuille-general")
+    public ResponseEntity<PortefeuilleClientCCPRapportDTO> genererRapport(
+            @Parameter(description = "Code du bureau postal", required = true)
+            @RequestParam Long codeBureau,
+
+            @Parameter(
+                    description = """
+                            Type de compte:
+                            1: Normal
+                            2: Oppose
+                            3: Cloturé
+                            4: Bloqué
+                            null: Tous les types
+                            """
+            )
+            @RequestParam(required = false) Integer typeCompte,
+
+            @Parameter(
+                    description = "État du compte (ACTIF/INACTIF)",
+                    schema = @Schema(allowableValues = {"ACTIF", "INACTIF"})
+            )
+            @RequestParam(required = false) String etatCompte,
+
+            @Parameter(description = "Numéro de page (commence à 0)")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "Nombre d'éléments par page")
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        log.debug("Generating portfolio report - bureau: {}, type: {}, state: {}",
+                codeBureau, typeCompte, etatCompte);
+
+        // Création du Pageable avec tri sur soldeCourant
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "soldeCourant"));
+
+        PortefeuilleClientCCPRapportDTO rapport = rapportCCPService
+                .genererRapportPortefeuilleClientFiltre(
+                        codeBureau,
+                        pageable,
+                        typeCompte,
+                        etatCompte
+                );
+
+        log.debug("Portfolio report generated successfully for bureau: {}", codeBureau);
+
+        return ResponseEntity.ok(rapport);
+    }
+
 }
