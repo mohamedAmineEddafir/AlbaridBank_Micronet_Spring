@@ -6,6 +6,7 @@ import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPRapportDTO;
 import com.albaridbank.edition.service.interfaces.RapportCCPService;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +37,7 @@ import java.math.BigDecimal;
  * Provides endpoints for generating client portfolio, financial movements, and global balance reports.
  * Includes Swagger annotations for API documentation.
  * </p>
+ *
  * @author Mohamed Amine Eddafir
  */
 @RestController
@@ -228,93 +232,176 @@ public class RapportClientCCPController {
         return ResponseEntity.ok(rapportCCPService.genererRapportEncoursGlobal(codeBureau));
     }
 
+
     /**
-     * Endpoint to generate a detailed client portfolio report for a specific bureau.
+     * Generates a detailed client portfolio report for a specific bureau.
      *
-     * <p>This method allows filtering by account type and state, with pagination support.
-     * The results are sorted by the current balance in descending order by default.</p>
-     *
-     * @param codeBureau The identifier of the postal bureau. This parameter is required.
-     * @param typeCompte An optional filter for the type of account:
-     *                   1: Normal
-     *                   2: Oppose
-     *                   3: Cloturé
-     *                   4: Bloqué
-     *                   null: All types.
-     * @param etatCompte An optional filter for the account state (ACTIF/INACTIF).
-     * @param page       The page number for pagination (default is 0).
-     * @param size       The number of items per page for pagination (default is 20).
-     * @return A {@link ResponseEntity} containing a {@link PortefeuilleClientCCPRapportDTO} object
-     * with the detailed client portfolio report.
+     * @param codeBureau Bureau postal code
+     * @param typeCompte Account type filter
+     * @param etatCompte Account state filter
+     * @param page       Page number (zero-based)
+     * @param size       Number of items per page
+     * @return Portfolio report with filtered accounts and statistics
      */
     @Operation(
             summary = "Générer un rapport détaillé du portefeuille client",
             description = """
-                    Génère un rapport détaillé du portefeuille client CCP pour un bureau spécifique.
-                    Permet de filtrer par type de compte et état, avec pagination des résultats.
-                    Les résultats sont triés par solde courant par défaut.
+                    Génère un rapport détaillé du portefeuille client CCP pour un bureau postal spécifique.
+                    
+                    Fonctionnalités:
+                    - Filtrage par type de compte et état
+                    - Pagination des résultats
+                    - Tri automatique par solde courant décroissant
+                    - Calcul des statistiques globales
+                    
+                    Le rapport inclut:
+                    - Informations détaillées du bureau
+                    - Liste paginée des comptes filtrés
+                    - Statistiques consolidées des soldes
+                    - États détaillés des comptes
                     """
     )
-    @ApiResponses(value = {
+    @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Rapport généré avec succès",
                     content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = PortefeuilleClientCCPRapportDTO.class)
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PortefeuilleClientCCPRapportDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Exemple de réponse",
+                                    value = """
+                                            {
+                                              "titreRapport": "ETAT PORTE FEUILLE CLIENT M CCP",
+                                              "dateEdition": "15/05/2025 23:44:41",
+                                              "codburpo": 1000,
+                                              "desburpo": "RABAT RP",
+                                              "nombreTotalComptes": 150,
+                                              "encoursTotalComptes": "2,470,087,666.88",
+                                              "comptes": [
+                                                {
+                                                  "idencomp": "13004727",
+                                                  "inticomp": "Mr EXEMPLE CLIENT",
+                                                  "etatCompte": "N",
+                                                  "typeCompteLibelle": "Normal",
+                                                  "soldcour": 2470087666.88
+                                                }
+                                              ]
+                                            }
+                                            """
+                            )
                     )
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Paramètres invalides",
+                    description = "Paramètres de requête invalides",
                     content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "message": "État de compte invalide: X",
+                                              "timestamp": "2025-05-15T23:44:41Z"
+                                            }
+                                            """
+                            )
                     )
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Bureau non trouvé",
+                    description = "Bureau postal non trouvé",
                     content = @Content(
-                            mediaType = "application/json",
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erreur interne du serveur",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
     })
-    @GetMapping("/portefeuille-general")
+    @GetMapping(
+            value = "/portefeuille-general",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<PortefeuilleClientCCPRapportDTO> genererRapport(
-            @Parameter(description = "Code du bureau postal", required = true)
-            @RequestParam Long codeBureau,
+            @Parameter(
+                    description = "Code du bureau postal",
+                    required = true,
+                    example = "1000",
+                    schema = @Schema(type = "integer", minimum = "1")
+            )
+            @RequestParam
+            @Min(value = 1, message = "Le code bureau doit être supérieur à 0")
+            Long codeBureau,
 
             @Parameter(
                     description = """
                             Type de compte:
-                            1: Normal
-                            2: Oppose
-                            3: Cloturé
-                            4: Bloqué
-                            null: Tous les types
-                            """
+                            * `1` - Compte courant postal
+                            * `2` - Compte épargne
+                            * `3` - Compte professionnel
+                            * `4` - Compte spécial
+                            * `null` - Tous les types
+                            """,
+                    schema = @Schema(
+                            type = "integer",
+                            allowableValues = {"1", "2", "3", "4"},
+                            example = "1"
+                    )
             )
-            @RequestParam(required = false) Integer typeCompte,
+            @RequestParam(required = false)
+            Integer typeCompte,
 
             @Parameter(
-                    description = "État du compte (ACTIF/INACTIF)",
-                    schema = @Schema(allowableValues = {"ACTIF", "INACTIF"})
+                    description = """
+                            État du compte:
+                            * `N/NORMAL` - Compte normal
+                            * `O/OPPOSE` - Compte opposé
+                            * `C/CLOTURE` - Compte clôturé
+                            * `B/BLOCAGE` - Compte bloqué
+                            * `null` - Tous les états actifs
+                            
+                            La casse n'est pas prise en compte.
+                            """,
+                    schema = @Schema(
+                            type = "string",
+                            allowableValues = {
+                                    "N", "O", "C", "B",
+                                    "NORMAL", "OPPOSE", "CLOTURE", "BLOCAGE"
+                            },
+                            example = "NORMAL"
+                    )
             )
-            @RequestParam(required = false) String etatCompte,
+            @RequestParam(required = false)
+            String etatCompte,
 
-            @Parameter(description = "Numéro de page (commence à 0)")
-            @RequestParam(defaultValue = "0") int page,
+            @Parameter(
+                    description = "Numéro de page (commence à 0)",
+                    schema = @Schema(type = "integer", minimum = "0", defaultValue = "0")
+            )
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "Le numéro de page doit être supérieur ou égal à 0")
+            int page,
 
-            @Parameter(description = "Nombre d'éléments par page")
-            @RequestParam(defaultValue = "20") int size
+            @Parameter(
+                    description = "Nombre d'éléments par page",
+                    schema = @Schema(type = "integer", minimum = "1", defaultValue = "10")
+            )
+            @RequestParam(defaultValue = "10")
+            @Min(value = 1, message = "La taille de la page doit être supérieure à 0")
+            int size
     ) {
-        log.debug("Generating portfolio report - bureau: {}, type: {}, state: {}",
-                codeBureau, typeCompte, etatCompte);
+        log.debug("Demande de génération de rapport - Bureau: {}, Type: {}, État: {}, Page: {}, Taille: {}",
+                codeBureau, typeCompte, etatCompte, page, size);
 
-        // Création du Pageable avec tri sur soldeCourant
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "soldeCourant"));
+        Pageable pageable = createPageableWithSort(page, size);
 
         PortefeuilleClientCCPRapportDTO rapport = rapportCCPService
                 .genererRapportPortefeuilleClientFiltre(
@@ -324,9 +411,24 @@ public class RapportClientCCPController {
                         etatCompte
                 );
 
-        log.debug("Portfolio report generated successfully for bureau: {}", codeBureau);
+        log.debug("Rapport généré avec succès pour le bureau: {}", codeBureau);
 
         return ResponseEntity.ok(rapport);
+    }
+
+    /**
+     * Creates a Pageable object with default sorting by current balance in descending order.
+     *
+     * @param page Page number (zero-based)
+     * @param size Number of items per page
+     * @return Configured {@link Pageable} object
+     */
+    private Pageable createPageableWithSort(int page, int size) {
+        return PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "soldeCourant")
+        );
     }
 
 }

@@ -64,15 +64,26 @@ public class RapportCCPServiceImpl implements RapportCCPService {
      */
     private static final List<String> INACTIVE_STATES = List.of("C", "I", "B");
 
-    /**
-     * List of inactive account states for global outstanding balance reports.
-     */
-    private static final List<String> ETATS_COMPTES_EXCLUS = List.of("C", "I");
 
     /**
-     * List of product types for filtering accounts.
+     * List of excluded account states for global statistics.
      */
-    private static final List<Integer> TYPES_PRODUITS = Arrays.asList(1, 2, 3, 4);
+    private static final List<String> ETATS_COMPTES_EXCLUS = List.of("C", "B"); // Cloturé et Bloqué
+
+    /**
+     * Map of account states and their corresponding labels.
+     */
+    private static final Map<String, String> ETATS_MAPPING = Map.of(
+            "NORMAL", "N",
+            "OPPOSE", "O",
+            "CLOTURE", "C",
+            "BLOCAGE", "B"
+    );
+
+    /**
+     * List of product types.
+     */
+    private static final List<Integer> TYPES_PRODUITS = List.of(1, 2, 3, 4);
 
     /**
      * Dependencies injected via constructor.
@@ -268,20 +279,29 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     }
 
     /**
+     * <h1>ETAT PORTEFEUILLE CLIENT CCP M</h1>
      * Generates a detailed client portfolio report for a specific bureau with optional filters.
      *
-     * <p>This method retrieves CCP accounts for a given bureau, applies optional filters
-     * for account type and state, calculates portfolio statistics, and maps the results
-     * into a detailed DTO for the client portfolio report.</p>
+     * <p>This method processes CCP accounts for a given bureau and applies specified filters
+     * for account type and state. The method follows a structured approach:
+     * <ol>
+     *   <li>Validates input parameters</li>
+     *   <li>Retrieves the bureau information</li>
+     *   <li>Processes and validates the account state filter</li>
+     *   <li>Determines excluded account states</li>
+     *   <li>Generates the final report with pagination</li>
+     * </ol>
      *
-     * @param codeBureau The code of the bureau for which the report is generated.
+     * @param codeBureau The unique identifier of the postal bureau for which to generate the report.
      *                   Must not be null.
-     * @param pageable   The pagination information to control the size and number of results.
-     * @param typeCompte An optional filter for the type of account. Can be null.
-     * @param etatCompte An optional filter for the state of the account. Can be null.
-     * @return A {@link PortefeuilleClientCCPRapportDTO} object containing the detailed client portfolio report.
-     * @throws IllegalArgumentException If the provided bureau code is null.
-     * @throws ResponseStatusException  If the specified bureau is not found.
+     * @param pageable   The pagination information to control the size and number of results returned.
+     * @param typeCompte An optional filter for the type of account (1, 2, 3, or 4).
+     *                   If null, accounts of all types are included.
+     * @param etatCompte An optional filter for the account state (N, O, C, B or their full names).
+     *                   If null, the default excluded states are applied.
+     * @return A {@link PortefeuilleClientCCPRapportDTO} containing the detailed client portfolio report.
+     * @throws IllegalArgumentException If the bureau code is null.
+     * @throws ResponseStatusException  If the bureau is not found, or if invalid account type or state is provided.
      */
     @Override
     public PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientFiltre(
@@ -290,39 +310,159 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             Integer typeCompte,
             String etatCompte
     ) {
-        if (codeBureau == null) {
-            throw new IllegalArgumentException("Bureau code cannot be null");
-        }
+        validateBureauCode(codeBureau);
+        validateTypeCompte(typeCompte);
 
-        log.debug("Generating client portfolio report for bureau: {}, type: {}, state: {}",
+        log.debug("Génération du rapport portefeuille client - Bureau: {}, Type: {}, État: {}",
                 codeBureau, typeCompte, etatCompte);
 
-        BureauPosteCCP bureauPoste = bureauPosteRepository.findByCodeBureau(codeBureau)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Bureau not found with code: " + codeBureau));
+        BureauPosteCCP bureauPoste = getBureauPoste(codeBureau);
+        String etatCompteFiltre = validateEtatCompte(etatCompte);
 
-        List<String> excludedStates = etatCompte == null
-                ? new ArrayList<>(ETATS_COMPTES_EXCLUS)
-                : ETATS_COMPTES_EXCLUS.stream()
-                .filter(state -> !state.equals(etatCompte))
-                .collect(Collectors.toList());
+        return generateReport(bureauPoste, pageable, typeCompte, etatCompteFiltre);
+    }
 
-        Page<CompteCCP> comptesPage = compteCCPRepository.findPortefeuilleClientsByBureauWithFilters(
-                codeBureau, excludedStates, typeCompte, pageable);
+    /**
+     * Validates that the bureau code is not null.
+     *
+     * @param codeBureau The bureau code to validate
+     * @throws IllegalArgumentException If the bureau code is null
+     */
+    private void validateBureauCode(Long codeBureau) {
+        if (codeBureau == null) {
+            throw new IllegalArgumentException("Le code du bureau ne peut pas être null");
+        }
+    }
 
-        PortefeuilleStats stats = compteCCPRepository.calculerStatistiquesPortefeuilleDetail(
-                codeBureau,
-                excludedStates,
-                typeCompte != null ? typeCompte : TYPES_PRODUITS.getFirst());
+    /**
+     * Validates that the account type is valid if specified.
+     *
+     * @param typeCompte The account type to validate. Can be null.
+     * @throws ResponseStatusException If the specified account type is invalid
+     */
+    private void validateTypeCompte(Integer typeCompte) {
+        if (typeCompte != null && !TYPES_PRODUITS.contains(typeCompte)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    String.format("Type de compte invalide: %d. Valeurs acceptées: %s",
+                            typeCompte, TYPES_PRODUITS)
+            );
+        }
+    }
 
-        List<PortefeuilleClientCCPDetailDTO> comptesDTO = comptesPage.getContent().stream()
-                .map(rapportCCPMapper::toDetailDTO)
-                .collect(Collectors.toList());
+    /**
+     * Retrieves the bureau information by its code.
+     *
+     * @param codeBureau The bureau code to look up
+     * @return The {@link BureauPosteCCP} entity
+     * @throws ResponseStatusException If no bureau is found with the specified code
+     */
+    private BureauPosteCCP getBureauPoste(Long codeBureau) {
+        return bureauPosteRepository.findByCodeBureau(codeBureau)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Bureau non trouvé avec le code: %d", codeBureau)
+                ));
+    }
 
-        return rapportCCPMapper.creerRapportPortefeuilleDetaillee(
-                bureauPoste.getCodeBureau(),
-                bureauPoste.getDesignation(),
-                comptesDTO,
-                stats);
+    /**
+     * Validates and normalizes the account state filter.
+     *
+     * @param etatCompte The account state to validate and normalize. Can be null.
+     * @return The normalized account state code, or null if no state was provided
+     * @throws ResponseStatusException If the provided account state is invalid
+     */
+    private String validateEtatCompte(String etatCompte) {
+        if (etatCompte == null) return null;
+
+        String upperEtatCompte = etatCompte.toUpperCase().trim();
+        if (ETATS_MAPPING.containsValue(upperEtatCompte)) {
+            return upperEtatCompte;
+        }
+
+        String mappedCode = ETATS_MAPPING.get(upperEtatCompte);
+        if (mappedCode != null) {
+            return mappedCode;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                String.format("État de compte invalide: %s. Valeurs acceptées: %s ou leurs codes: %s",
+                        etatCompte, ETATS_MAPPING.keySet(), ETATS_MAPPING.values())
+        );
+    }
+
+    /**
+     * Generates the detailed client portfolio report.
+     *
+     * @param bureauPoste      The bureau entity
+     * @param pageable         The pagination information
+     * @param typeCompte       The account type filter (can be null)
+     * @param etatCompteFiltre The validated account state filter (can be null)
+     * @return A {@link PortefeuilleClientCCPRapportDTO} containing the portfolio report
+     * @throws ResponseStatusException If an error occurs during report generation
+     */
+    private PortefeuilleClientCCPRapportDTO generateReport(
+            BureauPosteCCP bureauPoste,
+            Pageable pageable,
+            Integer typeCompte,
+            String etatCompteFiltre
+    ) {
+        try {
+            Page<CompteCCP> comptesPage = compteCCPRepository
+                    .findPortefeuilleClientsByBureauWithFilters(
+                            bureauPoste.getCodeBureau(),
+                            etatCompteFiltre,
+                            typeCompte,
+                            pageable
+                    );
+
+            PortefeuilleStats stats = compteCCPRepository
+                    .calculerStatistiquesPortefeuilleDetail(
+                            bureauPoste.getCodeBureau(),
+                            etatCompteFiltre,
+                            typeCompte
+                    );
+
+            List<PortefeuilleClientCCPDetailDTO> comptesDTO = comptesPage.getContent()
+                    .stream()
+                    .map(rapportCCPMapper::toDetailDTO)
+                    .collect(Collectors.toList());
+
+            validateResults(etatCompteFiltre, comptesDTO);
+
+            return rapportCCPMapper.creerRapportPortefeuilleDetaillee(
+                    bureauPoste.getCodeBureau(),
+                    bureauPoste.getDesignation(),
+                    comptesDTO,
+                    stats
+            );
+
+        } catch (Exception e) {
+            log.error("Erreur lors de la génération du rapport pour le bureau {}: {}",
+                    bureauPoste.getCodeBureau(), e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Erreur lors de la génération du rapport",
+                    e
+            );
+        }
+    }
+
+    /**
+     * Validates that all returned accounts match the requested state.
+     *
+     * @param etatCompteFiltre The requested account state
+     * @param comptesDTO       The list of account DTOs to validate
+     */
+    private void validateResults(String etatCompteFiltre, List<PortefeuilleClientCCPDetailDTO> comptesDTO) {
+        if (etatCompteFiltre != null && !comptesDTO.isEmpty()) {
+            boolean allMatchState = comptesDTO.stream()
+                    .allMatch(dto -> etatCompteFiltre.equals(dto.getEtatCompte()));
+            if (!allMatchState) {
+                log.error("Des comptes avec un état incorrect ont été retournés pour l'état: {}",
+                        etatCompteFiltre);
+            }
+        }
     }
 }
