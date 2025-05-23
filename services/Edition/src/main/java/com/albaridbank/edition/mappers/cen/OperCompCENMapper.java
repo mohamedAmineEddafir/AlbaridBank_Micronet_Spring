@@ -11,9 +11,8 @@ import java.util.List;
 public interface OperCompCENMapper {
     // Vos méthodes de mappage existantes...
 
-<<<<<<< Updated upstream
     @Mapping(source = "compteDebit", target = "idencomp")
-    @Mapping(expression = "java(getIntituleCompte(operComp))", target = "inticomp")
+    //@Mapping(expression = "java(getIntituleCompte(operComp))", target = "inticomp")
     @Mapping(source = "typeOperation.libelle", target = "libtypop")
     @Mapping(expression = "java(getSens(operComp))", target = "sensMouvement")
     @Mapping(source = "montantOperation", target = "montoper")
@@ -23,16 +22,16 @@ public interface OperCompCENMapper {
 
     default String getSens(OperCompCEN operComp) {
         return operComp.getCompteDebit() != null ? "D" : "C";
-=======
-    // Ajoutez cette méthode pour résoudre l'erreur:
+    }
+
+    // Ajoutez cette méthode pour résoudre l'erreur :
     default String map(TypeOperCEN typeOperCEN) {
         if (typeOperCEN == null) {
             return null;
         }
         // Retournez la propriété appropriée de TypeOperCEN qui représente
         // la valeur textuelle que vous souhaitez mapper
-        // Par exemple:
+        // Par exemple :
         return typeOperCEN.getLibelle(); // Ou toute autre méthode qui renvoie la description/libellé
->>>>>>> Stashed changes
     }
 }

@@ -175,61 +175,6 @@ public class AgenceServiceImpl implements AgenceService {
         }
     }
 
-/*
-    /*
-     * Récupère les agences par groupe.
-     *
-     * @param groupe Le groupe à rechercher
-     * @return Liste des agences correspondantes
-     * @throws RuntimeException si une erreur survient
-     /*
-    @Override
-    public List<BranchDTO> getBranchesByGroupe(String groupe) {
-        log.info("Récupération des agences par groupe: {}", groupe);
-        Objects.requireNonNull(groupe, "Le groupe ne peut pas être null");
-        try {
-            List<BranchDTO> brGroup = branchMapper.toDtoList(agenceRepository.findByLibelleGroupe(groupe));
-
-            if (brGroup.isEmpty()) {
-                log.warn("Aucune agence trouvée dans le groupe: {}", groupe);
-                throw new EntityNotFoundException("Aucune agence trouvée dans le groupe: " + groupe);
-            }
-
-            log.info("Nombre d'agences trouvées dans le groupe {}: {}", groupe, brGroup.size());
-            return brGroup;
-        } catch (Exception ex) {
-            log.error("Erreur lors de la récupération des agences par groupe {}: {}", groupe, ex.getMessage(), ex);
-            throw new RuntimeException("Échec de la récupération des agences par groupe", ex);
-        }
-    }
-
-    /*
-     * Récupère les agences par localité.
-     *
-     * @param localite La localité à rechercher
-     * @return Liste des agences correspondantes
-     * @throws RuntimeException si une erreur survient
-     /*
-    @Override
-    public List<BranchDTO> getBranchesByLocalite(String localite) {
-        log.info("Récupération des agences par localité: {}", localite);
-        Objects.requireNonNull(localite, "La localité ne peut pas être null");
-        try {
-            List<BranchDTO> brLocalite = branchMapper.toDtoList(agenceRepository.findByLibelleLocalite(localite));
-
-            if (brLocalite.isEmpty()) {
-                log.warn("Aucune agence trouvée dans la localité: {}", localite);
-                throw new EntityNotFoundException("Aucune agence trouvée dans la localité: " + localite);
-            }
-
-            log.info("Nombre d'agences trouvées dans la localité {}: {}", localite, brLocalite.size());
-            return brLocalite;
-        } catch (Exception ex) {
-            log.error("Erreur lors de la récupération des agences par localité {}: {}", localite, ex.getMessage(), ex);
-            throw new RuntimeException("Échec de la récupération des agences par localité", ex);
-        }
-    }*/
-
     /**
      * Récupère les agences par région.
      *
