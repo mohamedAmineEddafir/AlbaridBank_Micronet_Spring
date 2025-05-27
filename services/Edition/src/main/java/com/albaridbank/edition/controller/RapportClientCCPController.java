@@ -41,7 +41,7 @@ import java.math.BigDecimal;
  * @author Mohamed Amine Eddafir
  */
 @RestController
-@RequestMapping("/api/rapports-ccp")
+@RequestMapping("/api/v1/rapportccp")
 @Tag(name = "Rapports CCP", description = "Endpoints for generating CCP reports")
 @SecurityRequirement(name = "bearer-key")
 @RequiredArgsConstructor
