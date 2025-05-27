@@ -48,7 +48,7 @@ public class ClientController {
      * @param id l'ID du client à récupérer
      * @return le client correspondant à l'ID
      */
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     /*
      *  @Operation(summary = "Get a client by ID", description = "Retrieves a client by their ID")
      *  @ApiResponses({                       // Documentation des réponses possibles
