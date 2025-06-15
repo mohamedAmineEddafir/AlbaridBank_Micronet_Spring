@@ -37,5 +37,9 @@ spring:
           uri: lb:http://EDITION-SERVICE # Load balancer URI for edition service
           predicates:
             - Path=/api/v1/rapportccp/** # Route for edition service
+        - id: edition-service-excel
+          uri: lb:http://EDITION-SERVICE
+          predicates:
+            - Path=/api/v1/export/excel/**
 server:
   port: 8222 # Port to run the gateway service

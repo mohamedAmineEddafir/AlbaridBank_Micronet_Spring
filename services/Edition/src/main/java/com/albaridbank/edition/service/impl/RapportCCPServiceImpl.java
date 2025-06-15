@@ -3,6 +3,7 @@ package com.albaridbank.edition.service.impl;
 import com.albaridbank.edition.dto.base.CompteCCPDetailDTO;
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import com.albaridbank.edition.dto.base.PortefeuilleClientCCPDetailDTO;
+import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
 import com.albaridbank.edition.dto.rapport.*;
 import com.albaridbank.edition.mappers.ccp.MvtFinancierCCPMapper;
 import com.albaridbank.edition.model.ccp.BureauPosteCCP;
@@ -29,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -463,6 +465,99 @@ public class RapportCCPServiceImpl implements RapportCCPService {
                 log.error("Des comptes avec un état incorrect ont été retournés pour l'état: {}",
                         etatCompteFiltre);
             }
+        }
+    }
+
+    /**
+     * Generates an Excel report for CCP client portfolio for a specific bureau.
+     *
+     * <p>This method retrieves all CCP accounts for the specified bureau, applying an optional
+     * filter for account state. The accounts are returned without pagination to ensure the Excel
+     * report contains the complete dataset. The method calculates total balances, converts entities
+     * to DTOs, and packages the results into a specialized DTO for Excel export.</p>
+     *
+     * <p>The generated report includes:
+     * <ul>
+     *   <li>Bureau information (code and name)</li>
+     *   <li>Report metadata (title, generation date, user)</li>
+     *   <li>Complete list of accounts matching the criteria</li>
+     *   <li>Summary statistics (total number of accounts and total balance)</li>
+     * </ul>
+     *
+     * @param codeBureau The unique identifier of the postal bureau for which to generate the report.
+     *                   Must not be null.
+     * @param etatCompte An optional filter for the account state. Can be null or empty for no filtering.
+     *                   When provided, only accounts with the matching state will be included.
+     * @param username   The username of the user generating the report, included in the report metadata.
+     * @return A {@link PortefeuilleClientCCPExcelDTO} containing the complete dataset and metadata for Excel export.
+     * @throws NullPointerException If the provided bureau code is null.
+     * @throws RuntimeException     If an error occurs during the report generation process.
+     */
+
+    @Override
+    @Transactional(readOnly = true)
+    public PortefeuilleClientCCPExcelDTO genererRapportPortefeuilleClientPourExcel(
+            Long codeBureau,
+            String etatCompte,
+            String username
+    ) {
+        log.info("Generating Excel report for bureau: {}, etatCompte: {}",
+                codeBureau, etatCompte);
+        Objects.requireNonNull(codeBureau, "Code bureau cannot be null");
+
+        try {
+            // Construire la spécification en fonction des paramètres de filtrage
+            Specification<CompteCCP> specification = (root, query, criteriaBuilder) -> {
+                assert query != null;
+                query.distinct(true);
+
+                // Filtrer par bureau
+                Specification<CompteCCP> spec = Specification.where(
+                        (r, q, cb) -> cb.equal(r.get("bureauPoste").get("codeBureau"), codeBureau));
+
+                // Filtrer par état de compte si spécifié
+                if (etatCompte != null && !etatCompte.trim().isEmpty()) {
+                    spec = spec.and((r, q, cb) -> cb.equal(r.get("codeEtatCompte"), etatCompte));
+                }
+
+                return spec.toPredicate(root, query, criteriaBuilder);
+            };
+
+            // Récupérer tous les comptes correspondant aux critères sans pagination
+            List<CompteCCP> comptes = compteCCPRepository.findAll(specification);
+
+            // Récupérer les informations du bureau
+            String designation = comptes.stream()
+                    .map(CompteCCP::getBureauPoste)
+                    .filter(Objects::nonNull)
+                    .map(BureauPosteCCP::getDesignation)
+                    .findFirst()
+                    .orElse("Bureau inconnu");
+
+            // Calculer les totaux
+            BigDecimal encoursTotal = comptes.stream()
+                    .map(CompteCCP::getSoldeCourant)  // Utilisez la méthode qui existe réellement dans CompteCCP
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // Convertir les entités en DTOs
+            List<CompteCCPDetailDTO> comptesDTO = compteCCPMapper.toCompteCCPDetailDTOList(comptes);
+
+            // Créer le DTO pour l'exportation Excel
+            PortefeuilleClientCCPExcelDTO excelDTO = new PortefeuilleClientCCPExcelDTO();
+            excelDTO.setTitreRapport("ETAT PORTEFEUILLE CLIENT CCP");
+            excelDTO.setDateEdition(LocalDateTime.now());
+            excelDTO.setUtilisateur(username);
+            excelDTO.setCodburpo(codeBureau);
+            excelDTO.setDesburpo(designation);
+            excelDTO.setComptes(comptesDTO);
+            excelDTO.setNombreTotalComptes(comptes.size());
+            excelDTO.setEncoursTotalComptes(encoursTotal);
+
+            return excelDTO;
+        } catch (Exception e) {
+            log.error("Error generating Excel report for bureau: {}", codeBureau, e);
+            throw new RuntimeException("Failed to generate Excel report", e);
         }
     }
 }

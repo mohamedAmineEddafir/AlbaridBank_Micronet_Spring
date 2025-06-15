@@ -1,5 +1,6 @@
 package com.albaridbank.edition.service.interfaces;
 
+import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
 import com.albaridbank.edition.dto.rapport.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,4 +69,19 @@ public interface RapportCCPService {
      * @return Rapport des Top 100 comptes
      */
     PortefeuilleClientCCP_Top100_DTO genererRapportTop100(Long codeBureau);
+
+    /**
+     * <h3>Export this Rapport as excel 'ETAT PORTEFEUILLE CLIENT CCP'</h3>
+     * This method is intended to export the client portfolio report as an Excel file.
+     *
+     * @param codeBureau Code du bureau de poste
+     * @param etatCompte état du compte (A : Actif, I : Inactif, etc., null : tous)
+     * @param username   Nom d'utilisateur qui a généré le rapport
+     * @return DTO contenant toutes les informations du rapport
+     */
+    PortefeuilleClientCCPExcelDTO genererRapportPortefeuilleClientPourExcel(
+            Long codeBureau,
+            String etatCompte,
+            String username
+    );
 }
