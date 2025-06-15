@@ -5,6 +5,9 @@
       <option name="customHeaders">
         <set>
           <option value="X-Total-Pages" />
+          <option value="X-User-Name" />
+          <option value="eddafirMohamedAmine" />
+          <option value="eddafir_mohamed_amine" />
         </set>
       </option>
     </inspection_tool>
