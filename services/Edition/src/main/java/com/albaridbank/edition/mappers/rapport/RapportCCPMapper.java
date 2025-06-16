@@ -3,6 +3,7 @@ package com.albaridbank.edition.mappers.rapport;
 import com.albaridbank.edition.dto.base.CompteCCPDetailDTO;
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import com.albaridbank.edition.dto.base.PortefeuilleClientCCPDetailDTO;
+import com.albaridbank.edition.dto.excelCCP.CompteMouvementVeilleExcelDTO;
 import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.dto.rapport.NbrTotalEncoursCCPDTO;
 import com.albaridbank.edition.dto.rapport.PortefeuilleClientCCPDTO;
@@ -213,4 +214,19 @@ public interface RapportCCPMapper {
         if (dto.getSolopede() == null) dto.setSolopede(BigDecimal.ZERO);
         if (dto.getSoldcert() == null) dto.setSoldcert(BigDecimal.ZERO);
     }
+
+    /**
+     * Convertit un CompteMouvementVeilleDTO en CompteMouvementVeilleExcelDTO pour l'export Excel
+     */
+    @Mapping(target = "titreRapport", source = "titreRapport")
+    @Mapping(target = "dateEdition", source = "dateEdition")
+    @Mapping(target = "journeeDu", source = "journeeDu")
+    @Mapping(target = "codeAgence", source = "codeAgence")
+    @Mapping(target = "nomAgence", source = "nomAgence")
+    @Mapping(target = "mouvements", expression = "java(rapportDTO.getMouvements().getContent())")
+    @Mapping(target = "nombreTotalComptes", source = "nombreTotalComptes")
+    @Mapping(target = "montantTotal", source = "montantTotal")
+    @Mapping(target = "joursAvant", source = "joursAvant")
+    @Mapping(target = "montantMinimum", source = "montantMinimum")
+    CompteMouvementVeilleExcelDTO toExcelDTO(CompteMouvementVeilleDTO rapportDTO);
 }

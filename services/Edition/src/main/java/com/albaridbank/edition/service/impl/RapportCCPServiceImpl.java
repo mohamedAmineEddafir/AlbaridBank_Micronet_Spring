@@ -19,9 +19,7 @@ import com.albaridbank.edition.mappers.ccp.CompteCCPMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -559,5 +557,20 @@ public class RapportCCPServiceImpl implements RapportCCPService {
             log.error("Error generating Excel report for bureau: {}", codeBureau, e);
             throw new RuntimeException("Failed to generate Excel report", e);
         }
+    }
+
+    @Override
+    public CompteMouvementVeilleDTO genererRapportMouvementVeillePourExcel(
+            Long codeAgence,
+            Integer joursAvant,
+            BigDecimal montantMinimum,
+            String username) {
+
+        // Récupérer les mouvements sans pagination pour avoir toutes les données
+        // Utiliser une taille de page très grande pour récupérer tous les éléments
+        Pageable pageable = PageRequest.of(0, 10000, Sort.by(Sort.Direction.DESC, "montant"));
+
+        // Appeler la méthode existante avec la pagination spéciale
+        return rapportMouvementVeille(codeAgence, montantMinimum, joursAvant, pageable);
     }
 }

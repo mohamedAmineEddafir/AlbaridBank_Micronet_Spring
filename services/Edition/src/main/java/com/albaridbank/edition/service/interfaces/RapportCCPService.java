@@ -84,4 +84,15 @@ public interface RapportCCPService {
             String etatCompte,
             String username
     );
+
+    /**
+     * <h3>Export this Rapport as excel 'ETAT DES COMPTES MOUVEMENTES LA VEILLE'</h3>
+     * Génère un rapport des comptes mouvementés pour l'export Excel
+     */
+    CompteMouvementVeilleDTO genererRapportMouvementVeillePourExcel(
+            Long codeAgence,
+            Integer joursAvant,
+            BigDecimal montantMinimum,
+            String username
+    );
 }
