@@ -1,5 +1,6 @@
 package com.albaridbank.edition.service.interfaces;
 
+import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
 import com.albaridbank.edition.dto.rapport.*;
 import org.springframework.data.domain.Page;
@@ -93,6 +94,15 @@ public interface RapportCCPService {
             Long codeAgence,
             Integer joursAvant,
             BigDecimal montantMinimum,
+            String username
+    );
+
+    /**
+     * <h3>Export this Rapport as excel 'ETAT NBR TOTAL ENCOURS G CCP'</h3>
+     * Génère un rapport du nombre total et de l'encours global pour l'export Excel
+     */
+    NbrTotalEncoursCCPExcelDTO genererRapportEncoursGlobalPourExcel(
+            Long codeBureau,
             String username
     );
 }

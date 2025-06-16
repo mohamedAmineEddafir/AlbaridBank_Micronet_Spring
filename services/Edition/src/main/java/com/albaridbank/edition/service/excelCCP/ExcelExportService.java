@@ -3,6 +3,7 @@ package com.albaridbank.edition.service.excelCCP;
 import com.albaridbank.edition.dto.base.CompteCCPDetailDTO;
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import com.albaridbank.edition.dto.excelCCP.CompteMouvementVeilleExcelDTO;
+import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,23 +109,123 @@ public class ExcelExportService {
         }
     }
 
+    /**
+     * Exporte les données du rapport "ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP" au format Excel
+     *
+     * @param rapportData Les données du rapport à exporter
+     * @return Un tableau d'octets contenant le fichier Excel
+     * @throws IOException En cas d'erreur lors de la création du fichier Excel
+     */
+    public byte[] exportEncoursGlobalCCPToExcel(NbrTotalEncoursCCPExcelDTO rapportData) throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Encours Global CCP");
+
+            // Styles pour le document
+            CellStyle headerStyle = createHeaderStyle(workbook);
+            CellStyle titleStyle = createTitleStyle(workbook);
+            CellStyle normalStyle = createNormalStyle(workbook);
+            CellStyle currencyStyle = createCurrencyStyle(workbook);
+            CellStyle numberStyle = createNumericStyle(workbook);
+
+            // Définir la largeur des colonnes
+            sheet.setColumnWidth(0, 5000);
+            sheet.setColumnWidth(1, 5000);
+
+            int rowIndex = 0;
+
+            // Titre du rapport
+            Row titleRow = sheet.createRow(rowIndex++);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue(rapportData.getTitreRapport());
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+
+            // Information de l'agence
+            Row agenceRow = sheet.createRow(rowIndex++);
+            Cell agenceLabel = agenceRow.createCell(0);
+            agenceLabel.setCellValue("Bureau:");
+            agenceLabel.setCellStyle(normalStyle);
+
+            Cell agenceValue = agenceRow.createCell(1);
+            agenceValue.setCellValue(rapportData.getCodeBureau() + " - " + rapportData.getDesignationBureau());
+            agenceValue.setCellStyle(normalStyle);
+
+            // Date du rapport
+            Row dateRow = sheet.createRow(rowIndex++);
+            Cell dateLabel = dateRow.createCell(0);
+            dateLabel.setCellValue("Journée du:");
+            dateLabel.setCellStyle(normalStyle);
+
+            Cell dateValue = dateRow.createCell(1);
+            dateValue.setCellValue(rapportData.getJourneeDu().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            dateValue.setCellStyle(normalStyle);
+
+            // Date d'édition
+            Row editionRow = sheet.createRow(rowIndex++);
+            Cell editionLabel = editionRow.createCell(0);
+            editionLabel.setCellValue("Date d'édition:");
+            editionLabel.setCellStyle(normalStyle);
+
+            Cell editionValue = editionRow.createCell(1);
+            editionValue.setCellValue(rapportData.getDateEdition().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+            editionValue.setCellStyle(normalStyle);
+
+            // Utilisateur
+            Row userRow = sheet.createRow(rowIndex++);
+            Cell userLabel = userRow.createCell(0);
+            userLabel.setCellValue("Utilisateur:");
+            userLabel.setCellStyle(normalStyle);
+
+            Cell userValue = userRow.createCell(1);
+            userValue.setCellValue(rapportData.getUtilisateur());
+            userValue.setCellStyle(normalStyle);
+
+            rowIndex++;
+
+            // Nombre de comptes
+            Row compteRow = sheet.createRow(rowIndex++);
+            Cell compteLabel = compteRow.createCell(0);
+            compteLabel.setCellValue("Nombre total de comptes:");
+            compteLabel.setCellStyle(headerStyle);
+
+            Cell compteValue = compteRow.createCell(1);
+            compteValue.setCellValue(rapportData.getNombreComptes());
+            compteValue.setCellStyle(numberStyle);
+
+            // Encours total
+            Row encoursRow = sheet.createRow(rowIndex++);
+            Cell encoursLabel = encoursRow.createCell(0);
+            encoursLabel.setCellValue("Encours total:");
+            encoursLabel.setCellStyle(headerStyle);
+
+            Cell encoursValue = encoursRow.createCell(1);
+            encoursValue.setCellValue(rapportData.getTotalEncours().doubleValue());
+            encoursValue.setCellStyle(currencyStyle);
+
+            // Écriture du workbook dans un ByteArrayOutputStream
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+
     private void createMouvementReportHeader(XSSFSheet sheet, CompteMouvementVeilleExcelDTO data,
                                              CellStyle titleStyle, CellStyle headerStyle, CellStyle normalStyle) {
-        // Ligne 1 : Titre du rapport
+        //  Titre du rapport
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(data.getTitreRapport());
         titleCell.setCellStyle(titleStyle);
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6));
 
-        // Ligne 2 : Information de l'agence
+        //  Information de l'agence
         Row agenceRow = sheet.createRow(1);
         Cell agenceCell = agenceRow.createCell(0);
         agenceCell.setCellValue("Agence: " + data.getCodeAgence() + " - " + data.getNomAgence());
         agenceCell.setCellStyle(normalStyle);
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 6));
 
-        // Ligne 3 : Date du rapport
+        //  Date du rapport
         Row dateRow = sheet.createRow(2);
         Cell dateCell = dateRow.createCell(0);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -132,7 +233,7 @@ public class ExcelExportService {
         dateCell.setCellStyle(normalStyle);
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 6));
 
-        // Ligne 4 : Date d'édition
+        //  Date d'édition
         Row infoRow = sheet.createRow(3);
         Cell infoCell = infoRow.createCell(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -140,7 +241,7 @@ public class ExcelExportService {
         infoCell.setCellStyle(normalStyle);
         sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 6));
 
-        // Ligne 5 : Paramètres du rapport
+        //  Paramètres du rapport
         Row paramRow = sheet.createRow(4);
         Cell paramCell = paramRow.createCell(0);
         String paramText = "Montant minimum: " + data.getMontantMinimum() + " DH";
@@ -344,21 +445,21 @@ public class ExcelExportService {
 
     private void createReportHeader(XSSFSheet sheet, PortefeuilleClientCCPExcelDTO data,
                                     CellStyle titleStyle, CellStyle headerStyle, CellStyle normalStyle) {
-        // Ligne 1 : Titre du rapport
+        //  Titre du rapport
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue(data.getTitreRapport());
         titleCell.setCellStyle(titleStyle);
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
 
-        // Ligne 2 : Information de l'agence
+        //  Information de l'agence
         Row agenceRow = sheet.createRow(1);
         Cell agenceCell = agenceRow.createCell(0);
         agenceCell.setCellValue("Agence: " + data.getCodburpo() + " - " + data.getDesburpo());
         agenceCell.setCellStyle(normalStyle);
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 9));
 
-        // Ligne 3 : Date d'édition et utilisateur
+        //  Date d'édition et utilisateur
         Row infoRow = sheet.createRow(2);
         Cell dateCell = infoRow.createCell(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");

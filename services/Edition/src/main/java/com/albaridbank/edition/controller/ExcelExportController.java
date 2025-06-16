@@ -1,6 +1,7 @@
 package com.albaridbank.edition.controller;
 
 import com.albaridbank.edition.dto.excelCCP.CompteMouvementVeilleExcelDTO;
+import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
 import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.mappers.rapport.RapportCCPMapper;
@@ -142,6 +143,66 @@ public class ExcelExportController {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String fileName = String.format("Comptes_Mouvementes_Agence_%s_%s.xlsx",
                     codeAgence, timestamp);
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+                    .replace("+", "%20");
+
+            // Configuration des en-têtes HTTP
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            headers.setContentDispositionFormData("attachment", encodedFileName);
+            headers.setContentLength(excelBytes.length);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelBytes);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid parameters for Excel export: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (IOException e) {
+            log.error("Error generating Excel file: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        } catch (Exception e) {
+            log.error("Unexpected error during Excel export: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Exporte le rapport "ETAT NOMBRE TOTAL & ENCOURS GLOBAL CCP" au format Excel
+     *
+     * @param codeBureau Code du bureau de poste
+     * @return Fichier Excel contenant le rapport
+     */
+    @Operation(
+            summary = "Exporter le rapport d'encours global CCP au format Excel",
+            description = "Génère un fichier Excel contenant le nombre total de comptes et l'encours global pour une agence spécifique"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Fichier Excel généré avec succès"),
+            @ApiResponse(responseCode = "400", description = "Paramètres invalides"),
+            @ApiResponse(responseCode = "404", description = "Bureau non trouvé"),
+            @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
+    })
+    @GetMapping("/encours-global-ccp/{codeBureau}")
+    public ResponseEntity<byte[]> exportEncoursGlobalCCPToExcel(
+            @PathVariable @Parameter(description = "Code du bureau de poste", required = true) Long codeBureau,
+            @RequestHeader(value = "eddafir_mohamed_amine", required = false, defaultValue = "system") String username) {
+
+        log.info("Exporting CCP Global Balance report to Excel for bureau: {}", codeBureau);
+
+        try {
+            // Récupérer les données pour l'export
+            NbrTotalEncoursCCPExcelDTO rapportData = rapportCCPService.genererRapportEncoursGlobalPourExcel(
+                    codeBureau, username);
+
+            // Génération du fichier Excel
+            byte[] excelBytes = excelExportService.exportEncoursGlobalCCPToExcel(rapportData);
+
+            // Construction du nom de fichier
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = String.format("Encours_Global_CCP_Bureau_%s_%s.xlsx",
+                    codeBureau, timestamp);
             String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
                     .replace("+", "%20");
 

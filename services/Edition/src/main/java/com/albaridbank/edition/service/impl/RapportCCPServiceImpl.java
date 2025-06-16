@@ -3,6 +3,7 @@ package com.albaridbank.edition.service.impl;
 import com.albaridbank.edition.dto.base.CompteCCPDetailDTO;
 import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import com.albaridbank.edition.dto.base.PortefeuilleClientCCPDetailDTO;
+import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
 import com.albaridbank.edition.dto.rapport.*;
 import com.albaridbank.edition.mappers.ccp.MvtFinancierCCPMapper;
@@ -559,6 +560,21 @@ public class RapportCCPServiceImpl implements RapportCCPService {
         }
     }
 
+    /**
+     * Generates an Excel report of financial movements for a specific agency.
+     *
+     * <p>This method retrieves all financial movements for the specified agency without pagination,
+     * ensuring that the Excel report contains the complete dataset. It uses a large page size to
+     * fetch all records and sorts them by amount in descending order.</p>
+     *
+     * @param codeAgence     The unique identifier of the agency for which to generate the report.
+     *                       Must not be null.
+     * @param joursAvant     The number of days before today to filter movements (e.g., 0 for today,
+     *                       1 for yesterday, etc.).
+     * @param montantMinimum The minimum amount of movement to include in the report. Can be null.
+     * @param username       The username of the user generating the report, included in the report metadata.
+     * @return A {@link CompteMouvementVeilleDTO} containing the complete dataset for Excel export.
+     */
     @Override
     public CompteMouvementVeilleDTO genererRapportMouvementVeillePourExcel(
             Long codeAgence,
@@ -572,5 +588,50 @@ public class RapportCCPServiceImpl implements RapportCCPService {
 
         // Appeler la méthode existante avec la pagination spéciale
         return rapportMouvementVeille(codeAgence, montantMinimum, joursAvant, pageable);
+    }
+
+    /**
+     * Generates an Excel report for the global balance of CCP accounts for a specific bureau.
+     *
+     * <p>This method retrieves the global balance report for the specified bureau and maps the
+     * data into a DTO suitable for Excel export. The report includes metadata such as the report
+     * title, generation date, and user information.</p>
+     *
+     * @param codeBureau The unique identifier of the bureau for which to generate the report.
+     *                   Must not be null.
+     * @param username   The username of the user generating the report, included in the report metadata.
+     * @return A {@link NbrTotalEncoursCCPExcelDTO} containing the global balance data for Excel export.
+     * @throws NullPointerException If the provided bureau code is null.
+     * @throws RuntimeException     If an error occurs during the report generation process.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public NbrTotalEncoursCCPExcelDTO genererRapportEncoursGlobalPourExcel(
+            Long codeBureau,
+            String username) {
+
+        log.info("Generating Excel report for global balance for bureau: {}", codeBureau);
+        Objects.requireNonNull(codeBureau, "Code bureau cannot be null");
+
+        try {
+            // Récupérer le rapport existant
+            NbrTotalEncoursCCPDTO rapportData = genererRapportEncoursGlobal(codeBureau);
+
+            // Créer et remplir le DTO pour l'export Excel
+            NbrTotalEncoursCCPExcelDTO excelDTO = new NbrTotalEncoursCCPExcelDTO();
+            excelDTO.setTitreRapport(rapportData.getTitreRapport());
+            excelDTO.setDateEdition(LocalDateTime.now());
+            excelDTO.setJourneeDu(rapportData.getJourneeDu());
+            excelDTO.setCodeBureau(rapportData.getCodeBureau());
+            excelDTO.setDesignationBureau(rapportData.getDesignationBureau());
+            excelDTO.setNombreComptes(rapportData.getNombreComptes());
+            excelDTO.setTotalEncours(rapportData.getTotalEncours());
+            excelDTO.setUtilisateur(username);
+
+            return excelDTO;
+        } catch (Exception e) {
+            log.error("Error generating Excel report for global balance for bureau: {}", codeBureau, e);
+            throw new RuntimeException("Failed to generate Excel report for global balance", e);
+        }
     }
 }
