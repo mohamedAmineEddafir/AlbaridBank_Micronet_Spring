@@ -3,6 +3,7 @@ package com.albaridbank.edition.controller;
 import com.albaridbank.edition.dto.excelCCP.CompteMouvementVeilleExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
+import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPMExcelDTO;
 import com.albaridbank.edition.dto.rapport.CompteMouvementVeilleDTO;
 import com.albaridbank.edition.mappers.rapport.RapportCCPMapper;
 import com.albaridbank.edition.service.excelCCP.ExcelExportService;
@@ -103,8 +104,8 @@ public class ExcelExportController {
     /**
      * Exporte le rapport "ETAT DES COMPTES MOUVEMENTES LA VEILLE" au format Excel
      *
-     * @param codeAgence Code de l'agence
-     * @param joursAvant Nombre de jours avant (0=aujourd'hui, 1=veille, 2=avant-veille)
+     * @param codeAgence     Code de l'agence
+     * @param joursAvant     Nombre de jours avant (0=aujourd'hui, 1=veille, 2=avant-veille)
      * @param montantMinimum Montant minimum des mouvements à considérer
      * @return Fichier Excel contenant le rapport
      */
@@ -202,6 +203,69 @@ public class ExcelExportController {
             // Construction du nom de fichier
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String fileName = String.format("Encours_Global_CCP_Bureau_%s_%s.xlsx",
+                    codeBureau, timestamp);
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+                    .replace("+", "%20");
+
+            // Configuration des en-têtes HTTP
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            headers.setContentDispositionFormData("attachment", encodedFileName);
+            headers.setContentLength(excelBytes.length);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelBytes);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid parameters for Excel export: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (IOException e) {
+            log.error("Error generating Excel file: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        } catch (Exception e) {
+            log.error("Unexpected error during Excel export: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Exporte le rapport "ETAT PORTEFEUILLE CLIENT M CCP" au format Excel
+     *
+     * @param codeBureau Code du bureau de poste
+     * @param etatCompte État du compte (optionnel)
+     * @return Fichier Excel contenant le rapport
+     */
+    @Operation(
+            summary = "Exporter le rapport portefeuille client M CCP au format Excel",
+            description = "Génère un fichier Excel contenant l'ensemble des comptes clients CCP pour une agence spécifique avec détails supplémentaires"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Fichier Excel généré avec succès"),
+            @ApiResponse(responseCode = "400", description = "Paramètres invalides"),
+            @ApiResponse(responseCode = "404", description = "Bureau non trouvé"),
+            @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
+    })
+    @GetMapping("/portefeuille-client-m-ccp/{codeBureau}")
+    public ResponseEntity<byte[]> exportPortefeuilleClientMCCPToExcel(
+            @PathVariable @Parameter(description = "Code du bureau de poste", required = true) Long codeBureau,
+            @RequestParam(required = false) @Parameter(description = "État du compte (N: Normal, C: Cloturé, B: Bloqué)") String etatCompte,
+            @RequestHeader(value = "eddafir_mohamed_amine", required = false, defaultValue = "system") String username) {
+
+        log.info("Exporting CCP Client Portfolio M report to Excel for bureau: {}, etatCompte: {}",
+                codeBureau, etatCompte);
+
+        try {
+            // Récupérer toutes les données sans pagination
+            PortefeuilleClientCCPMExcelDTO rapportData = rapportCCPService.genererRapportPortefeuilleClientMPourExcel(
+                    codeBureau, etatCompte, username);
+
+            // Génération du fichier Excel
+            byte[] excelBytes = excelExportService.exportPortefeuilleClientMCCPToExcel(rapportData);
+
+            // Construction du nom de fichier
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = String.format("Portefeuille_Client_M_CCP_Agence_%s_%s.xlsx",
                     codeBureau, timestamp);
             String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
                     .replace("+", "%20");

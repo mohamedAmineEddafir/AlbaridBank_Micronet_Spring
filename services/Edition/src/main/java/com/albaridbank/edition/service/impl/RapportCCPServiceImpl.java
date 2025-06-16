@@ -5,6 +5,7 @@ import com.albaridbank.edition.dto.base.MouvementFinancierDTO;
 import com.albaridbank.edition.dto.base.PortefeuilleClientCCPDetailDTO;
 import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
+import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPMExcelDTO;
 import com.albaridbank.edition.dto.rapport.*;
 import com.albaridbank.edition.mappers.ccp.MvtFinancierCCPMapper;
 import com.albaridbank.edition.model.ccp.BureauPosteCCP;
@@ -632,6 +633,77 @@ public class RapportCCPServiceImpl implements RapportCCPService {
         } catch (Exception e) {
             log.error("Error generating Excel report for global balance for bureau: {}", codeBureau, e);
             throw new RuntimeException("Failed to generate Excel report for global balance", e);
+        }
+    }
+
+    /**
+     * Génère un rapport de portefeuille client M CCP pour l'export Excel
+     *
+     * <p>Cette méthode récupère les données détaillées des comptes CCP pour un bureau spécifique,
+     * avec un filtrage optionnel par état de compte. Les données sont récupérées sans pagination
+     * pour assurer que le rapport Excel contient l'ensemble complet des données.</p>
+     *
+     * @param codeBureau Le code du bureau
+     * @param etatCompte L'état du compte (optionnel)
+     * @param username   Nom d'utilisateur
+     * @return Le DTO contenant les données pour l'export Excel
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PortefeuilleClientCCPMExcelDTO genererRapportPortefeuilleClientMPourExcel(
+            Long codeBureau, String etatCompte, String username) {
+
+        log.info("Generating Excel report for Portfolio M CCP for bureau: {}, etatCompte: {}",
+                codeBureau, etatCompte);
+        Objects.requireNonNull(codeBureau, "Code bureau cannot be null");
+
+        try {
+            // Validation de l'état du compte si fourni
+            String etatCompteFiltre = null;
+            if (etatCompte != null && !etatCompte.trim().isEmpty()) {
+                etatCompteFiltre = validateEtatCompte(etatCompte);
+            }
+
+            // Récupérer les informations du bureau
+            BureauPosteCCP bureauPoste = getBureauPoste(codeBureau);
+
+            // Récupérer toutes les données sans pagination
+            List<CompteCCP> comptes = compteCCPRepository.findPortefeuilleClientsByBureauWithFilters(
+                            codeBureau, etatCompteFiltre, null, Pageable.unpaged())
+                    .getContent();
+
+            // Récupérer les statistiques
+            PortefeuilleStats stats = compteCCPRepository.calculerStatistiquesPortefeuilleDetail(
+                    codeBureau, etatCompteFiltre, null);
+
+            // Mapper les données
+            List<PortefeuilleClientCCPDetailDTO> comptesDTO = comptes.stream()
+                    .map(rapportCCPMapper::toDetailDTO)
+                    .collect(Collectors.toList());
+
+            // Créer le DTO pour l'export Excel
+            PortefeuilleClientCCPMExcelDTO excelDTO = new PortefeuilleClientCCPMExcelDTO();
+            excelDTO.setTitreRapport("ETAT PORTE FEUILLE CLIENT M CCP");
+            excelDTO.setDateEdition(LocalDateTime.now());
+            excelDTO.setNumeroPage("1");
+            excelDTO.setCodburpo(codeBureau);
+            excelDTO.setDesburpo(bureauPoste.getDesignation());
+            excelDTO.setComptes(comptesDTO);
+            excelDTO.setNombreTotalComptes(stats.getNombreTotalComptes());
+            excelDTO.setEncoursTotalComptes(stats.getEncoursTotalComptes());
+            excelDTO.setTotalSoldeOpposition(stats.getTotalSoldeOpposition());
+            excelDTO.setTotalSoldeTaxe(stats.getTotalSoldeTaxe());
+            excelDTO.setTotalSoldeDebitOperations(stats.getTotalSoldeDebitOperations());
+            excelDTO.setTotalSoldeCreditOperations(stats.getTotalSoldeCreditOperations());
+            excelDTO.setTotalSoldeOperationsPeriode(stats.getTotalSoldeOperationsPeriode());
+            excelDTO.setTotalSoldeCertifie(stats.getTotalSoldeCertifie());
+            excelDTO.setUtilisateur(username);
+
+            return excelDTO;
+
+        } catch (Exception e) {
+            log.error("Error generating Excel report for Portfolio M CCP for bureau: {}", codeBureau, e);
+            throw new RuntimeException("Failed to generate Excel report for Portfolio M CCP", e);
         }
     }
 }

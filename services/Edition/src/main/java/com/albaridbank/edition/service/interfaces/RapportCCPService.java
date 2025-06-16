@@ -2,6 +2,7 @@ package com.albaridbank.edition.service.interfaces;
 
 import com.albaridbank.edition.dto.excelCCP.NbrTotalEncoursCCPExcelDTO;
 import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPExcelDTO;
+import com.albaridbank.edition.dto.excelCCP.PortefeuilleClientCCPMExcelDTO;
 import com.albaridbank.edition.dto.rapport.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -98,11 +99,21 @@ public interface RapportCCPService {
     );
 
     /**
-     * <h3>Export this Rapport as excel 'ETAT NBR TOTAL ENCOURS G CCP'</h3>
+     * Export this Rapport as Excel <h3>'ETAT NBR TOTAL ENCOURS G CCP'</h3>
      * Génère un rapport du nombre total et de l'encours global pour l'export Excel
      */
     NbrTotalEncoursCCPExcelDTO genererRapportEncoursGlobalPourExcel(
             Long codeBureau,
             String username
     );
+
+    /**
+     * Génère un rapport de portefeuille client M CCP pour l'export Excel <h3>ETAT PORTEFEUILLE CLIENT M CCP</h3>
+     *
+     * @param codeBureau Le code du bureau
+     * @param etatCompte L'état du compte (optionnel)
+     * @param username Nom d'utilisateur
+     * @return Le DTO contenant les données pour l'export Excel
+     */
+    PortefeuilleClientCCPMExcelDTO genererRapportPortefeuilleClientMPourExcel(Long codeBureau, String etatCompte, String username);
 }
