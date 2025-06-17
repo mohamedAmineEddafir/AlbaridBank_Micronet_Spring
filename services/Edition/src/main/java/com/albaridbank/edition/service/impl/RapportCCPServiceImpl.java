@@ -64,13 +64,13 @@ public class RapportCCPServiceImpl implements RapportCCPService {
     /**
      * List of inactive account states.
      */
-    private static final List<String> INACTIVE_STATES = List.of("C", "I", "B");
+    private static final List<String> INACTIVE_STATES = List.of("C", "B", "O"); // Cloturé , Bloqué , Opposé
 
 
     /**
      * List of excluded account states for global statistics.
      */
-    private static final List<String> ETATS_COMPTES_EXCLUS = List.of("C", "B"); // Cloturé et Bloqué
+    private static final List<String> ETATS_COMPTES_EXCLUS = List.of("C", "B", "O"); // Cloturé , Bloqué , Opposé
 
     /**
      * Map of account states and their corresponding labels.
