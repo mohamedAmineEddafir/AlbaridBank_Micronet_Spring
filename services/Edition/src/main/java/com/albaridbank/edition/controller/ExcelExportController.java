@@ -59,7 +59,7 @@ public class ExcelExportController {
     public ResponseEntity<byte[]> exportPortefeuilleClientCCPToExcel(
             @PathVariable @Parameter(description = "Code du bureau de poste", required = true) Long codeBureau,
             @RequestParam(required = false) @Parameter(description = "État du compte (A: Actif, I: Inactif, etc.)") String etatCompte,
-            @RequestHeader(value = "eddafir_mohamed_amine", required = false, defaultValue = "system") String username) {
+            @RequestHeader(value = "X-User-Agent", required = false, defaultValue = "system") String username) {
 
         log.info("Exporting CCP Client Portfolio report to Excel for bureau: {}, etatCompte: {}",
                 codeBureau, etatCompte);
@@ -250,7 +250,7 @@ public class ExcelExportController {
     public ResponseEntity<byte[]> exportPortefeuilleClientMCCPToExcel(
             @PathVariable @Parameter(description = "Code du bureau de poste", required = true) Long codeBureau,
             @RequestParam(required = false) @Parameter(description = "État du compte (N: Normal, C: Cloturé, B: Bloqué)") String etatCompte,
-            @RequestHeader(value = "eddafir_mohamed_amine", required = false, defaultValue = "system") String username) {
+            @RequestHeader(value = "X-User-Agent", required = false, defaultValue = "system") String username) {
 
         log.info("Exporting CCP Client Portfolio M report to Excel for bureau: {}, etatCompte: {}",
                 codeBureau, etatCompte);
