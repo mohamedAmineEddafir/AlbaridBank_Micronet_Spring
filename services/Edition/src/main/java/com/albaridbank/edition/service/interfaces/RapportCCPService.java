@@ -48,29 +48,47 @@ public interface RapportCCPService {
     Page<PortefeuilleClientCCPDTO> genererRapportPortefeuilleClient(Pageable pageable, Long codeBureau);
 
     /**
-     * Génère le rapport détaillé du portefeuille client CCP pour une agence donnée avec filtres
+     * Génère un rapport de portefeuille client CCP pour une recherche spécifique
      *
-     * @param codeBureau code de l'agence
-     * @param pageable   pagination des résultats
-     * @param typeCompte type de compte (1: Normal, 2: Dirham Convertible, null: tous)
-     * @param etatCompte état du compte (A : Actif, I : Inactif, etc., null : tous)
-     * @return DTO contenant les informations du rapport
-     * @throws IllegalArgumentException si le code bureau est null
+     * @param codeBureau Le code du bureau
+     * @param pageable   Information de pagination
+     * @param typeCompte Le type de compte (1: Compte courant postal, 2: professional, etc., null: tous)
+     * @param etatCompte L'état du compte (N : Normal, O : Oposé, etc., null : tous)
+     * @param searchTerm Le terme de recherche pour filtrer les résultats
+     * @return Le DTO contenant les données du rapport de portefeuille client CCP
      */
-    PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientFiltre(
-            Long codeBureau,
-            Pageable pageable,
-            Integer typeCompte,
-            String etatCompte
-    );
+    PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientRecherche(Long codeBureau, Pageable pageable, Integer typeCompte, String etatCompte, String searchTerm);
 
     /**
+     * Génère un rapport de portefeuille client CCP avec des filtres spécifiques
+     *
+     * @param codeBureau Code du bureau de poste
+     * @param pageable   Information de pagination
+     * @param typeCompte Le type de compte (1: Compte courant postal, 2: professional, etc., null: tous)
+     * @param etatCompte L'état du compte (N : Normal, O : Oposé, etc., null : tous)
+     * @return Le DTO contenant les données du rapport de portefeuille client CCP
+     */
+    PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientFiltre(Long codeBureau, Pageable pageable, Integer typeCompte, String etatCompte);
+
+
+    /*
      * Génère un rapport des 100 plus grands comptes CCP par solde
      *
      * @param codeBureau Code du bureau de poste
      * @return Rapport des Top 100 comptes
+     **/
+    //PortefeuilleClientCCP_Top100_DTO genererRapportTop100(Long codeBureau);
+
+    /**
+     * Génère un rapport de portefeuille client CCP pour une recherche globale
+     *
+     * @param codeBureau Le code du bureau
+     * @param typeCompte Le type de compte (1: Compte courant postal, 2: professional, etc., null: tous)
+     * @param etatCompte L'état du compte (N : Normal, O : Oposé, etc., null : tous)
+     * @param searchTerm Le terme de recherche pour filtrer les résultats
+     * @return Le DTO contenant les données du rapport de portefeuille client CCP
      */
-    PortefeuilleClientCCP_Top100_DTO genererRapportTop100(Long codeBureau);
+    PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientRechercheGlobale(Long codeBureau, Integer typeCompte, String etatCompte, String searchTerm);
 
     /**
      * <h3>Export this Rapport as excel 'ETAT PORTEFEUILLE CLIENT CCP'</h3>
@@ -81,38 +99,26 @@ public interface RapportCCPService {
      * @param username   Nom d'utilisateur qui a généré le rapport
      * @return DTO contenant toutes les informations du rapport
      */
-    PortefeuilleClientCCPExcelDTO genererRapportPortefeuilleClientPourExcel(
-            Long codeBureau,
-            String etatCompte,
-            String username
-    );
+    PortefeuilleClientCCPExcelDTO genererRapportPortefeuilleClientPourExcel(Long codeBureau, String etatCompte, String username);
 
     /**
      * <h3>Export this Rapport as excel 'ETAT DES COMPTES MOUVEMENTES LA VEILLE'</h3>
      * Génère un rapport des comptes mouvementés pour l'export Excel
      */
-    CompteMouvementVeilleDTO genererRapportMouvementVeillePourExcel(
-            Long codeAgence,
-            Integer joursAvant,
-            BigDecimal montantMinimum,
-            String username
-    );
+    CompteMouvementVeilleDTO genererRapportMouvementVeillePourExcel(Long codeAgence, Integer joursAvant, BigDecimal montantMinimum, String username);
 
     /**
      * Export this Rapport as Excel <h3>'ETAT NBR TOTAL ENCOURS G CCP'</h3>
      * Génère un rapport du nombre total et de l'encours global pour l'export Excel
      */
-    NbrTotalEncoursCCPExcelDTO genererRapportEncoursGlobalPourExcel(
-            Long codeBureau,
-            String username
-    );
+    NbrTotalEncoursCCPExcelDTO genererRapportEncoursGlobalPourExcel(Long codeBureau, String username);
 
     /**
      * Génère un rapport de portefeuille client M CCP pour l'export Excel <h3>ETAT PORTEFEUILLE CLIENT M CCP</h3>
      *
      * @param codeBureau Le code du bureau
      * @param etatCompte L'état du compte (optionnel)
-     * @param username Nom d'utilisateur
+     * @param username   Nom d'utilisateur
      * @return Le DTO contenant les données pour l'export Excel
      */
     PortefeuilleClientCCPMExcelDTO genererRapportPortefeuilleClientMPourExcel(Long codeBureau, String etatCompte, String username);

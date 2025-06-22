@@ -98,4 +98,114 @@ public interface CompteCCPRepository extends JpaRepository<CompteCCP, Long>, Jpa
             @Param("etatCompte") String etatCompte,
             @Param("typeCompte") Integer typeCompte
     );
+
+    /**
+     * Finds accounts by bureau with filters and search term with pagination.
+     *
+     * @param codeBureau The bureau code
+     * @param etatCompte The account state filter (can be null)
+     * @param typeCompte The account type filter (can be null)
+     * @param searchTerm The search term to filter accounts
+     * @param pageable   The pagination information
+     * @return A page of matching accounts
+     */
+    @Query("""
+                SELECT c FROM CompteCCP c
+                JOIN FETCH c.client cl
+                JOIN FETCH cl.categorieSocioProfessionnelle csp
+                JOIN FETCH c.bureauPoste bp
+                WHERE c.bureauPoste.codeBureau = :codeBureau
+                AND (:etatCompte IS NULL OR c.codeEtatCompte = :etatCompte)
+                AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
+                AND (
+                    LOWER(c.intitule) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR CAST(c.idCompte AS string) LIKE CONCAT('%', :searchTerm, '%')
+                    OR LOWER(c.adresse) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(c.intituleCondense) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(cl.numeroPieceIdentite) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(cl.telephone) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                )
+                ORDER BY c.soldeCourant DESC
+            """)
+    Page<CompteCCP> findPortefeuilleClientsByBureauWithSearch(
+            @Param("codeBureau") Long codeBureau,
+            @Param("etatCompte") String etatCompte,
+            @Param("typeCompte") Integer typeCompte,
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
+
+    /**
+     * Finds all accounts by bureau with filters and search term (no pagination).
+     *
+     * @param codeBureau The bureau code
+     * @param etatCompte The account state filter (can be null)
+     * @param typeCompte The account type filter (can be null)
+     * @param searchTerm The search term to filter accounts
+     * @return List of all matching accounts
+     */
+    @Query("""
+                SELECT c FROM CompteCCP c
+                JOIN FETCH c.client cl
+                JOIN FETCH cl.categorieSocioProfessionnelle csp
+                JOIN FETCH c.bureauPoste bp
+                WHERE c.bureauPoste.codeBureau = :codeBureau
+                AND (:etatCompte IS NULL OR c.codeEtatCompte = :etatCompte)
+                AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
+                AND (
+                    LOWER(c.intitule) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR CAST(c.idCompte AS string) LIKE CONCAT('%', :searchTerm, '%')
+                    OR LOWER(c.adresse) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(c.intituleCondense) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(cl.numeroPieceIdentite) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(cl.telephone) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                )
+                ORDER BY c.soldeCourant DESC
+            """)
+    List<CompteCCP> findAllPortefeuilleClientsByBureauWithSearch(
+            @Param("codeBureau") Long codeBureau,
+            @Param("etatCompte") String etatCompte,
+            @Param("typeCompte") Integer typeCompte,
+            @Param("searchTerm") String searchTerm
+    );
+
+    /**
+     * Calculates statistics for accounts that match the search criteria.
+     *
+     * @param codeBureau The bureau code
+     * @param etatCompte The account state filter (can be null)
+     * @param typeCompte The account type filter (can be null)
+     * @param searchTerm The search term to filter accounts
+     * @return Statistics for matching accounts
+     */
+    @Query("""
+                SELECT
+                    COUNT(c) as nombreTotalComptes,
+                    SUM(c.soldeCourant) as encoursTotalComptes,
+                    SUM(c.soldeOpposition) as totalSoldeOpposition,
+                    SUM(c.soldeTaxe) as totalSoldeTaxe,
+                    SUM(c.soldeDebitOperations) as totalSoldeDebitOperations,
+                    SUM(c.soldeCreditOperations) as totalSoldeCreditOperations,
+                    SUM(c.soldeOperationsPeriode) as totalSoldeOperationsPeriode,
+                    SUM(c.soldeCertifie) as totalSoldeCertifie
+                FROM CompteCCP c
+                JOIN c.client cl
+                WHERE c.bureauPoste.codeBureau = :codeBureau
+                AND (:etatCompte IS NULL OR c.codeEtatCompte = :etatCompte)
+                AND (:typeCompte IS NULL OR c.codeProduit = :typeCompte)
+                AND (
+                    LOWER(c.intitule) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR CAST(c.idCompte AS string) LIKE CONCAT('%', :searchTerm, '%')
+                    OR LOWER(c.adresse) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(c.intituleCondense) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(cl.numeroPieceIdentite) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                    OR LOWER(cl.telephone) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                )
+            """)
+    PortefeuilleStats calculerStatistiquesPortefeuilleDetailAvecRecherche(
+            @Param("codeBureau") Long codeBureau,
+            @Param("etatCompte") String etatCompte,
+            @Param("typeCompte") Integer typeCompte,
+            @Param("searchTerm") String searchTerm
+    );
 }

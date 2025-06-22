@@ -26,10 +26,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 /**
  * <p>
@@ -49,7 +51,6 @@ import java.math.BigDecimal;
 public class RapportClientCCPController {
 
     private final RapportCCPService rapportCCPService;
-    //private static final List<String> VALID_SORT_PROPERTIES = List.of("dateCreation", "montant", "dateMouvement");
 
     /**
      * Generates a report on the client portfolio status for a specific bureau.
@@ -396,20 +397,54 @@ public class RapportClientCCPController {
             )
             @RequestParam(defaultValue = "10")
             @Min(value = 1, message = "La taille de la page doit être supérieure à 0")
-            int size
+            int size,
+
+            @Parameter(
+                    description = "Terme de recherche (nom du client, numéro de compte, adresse, etc.)",
+                    schema = @Schema(type = "string")
+            )
+            @RequestParam(required = false)
+            String search,
+
+            @Parameter(
+                    description = "Indique si la recherche doit être globale (tous les résultats sans pagination)",
+                    schema = @Schema(type = "boolean", defaultValue = "false")
+            )
+            @RequestParam(defaultValue = "false")
+            boolean globalSearch
     ) {
-        log.debug("Demande de génération de rapport - Bureau: {}, Type: {}, État: {}, Page: {}, Taille: {}",
-                codeBureau, typeCompte, etatCompte, page, size);
+        log.debug("Demande de génération de rapport - Bureau: {}, Type: {}, État: {}, Page: {}, Taille: {}, Recherche: {}, Recherche globale: {}",
+                codeBureau, typeCompte, etatCompte, page, size, search, globalSearch);
 
         Pageable pageable = createPageableWithSort(page, size);
 
-        PortefeuilleClientCCPRapportDTO rapport = rapportCCPService
-                .genererRapportPortefeuilleClientFiltre(
+        PortefeuilleClientCCPRapportDTO rapport;
+
+        if (StringUtils.hasText(search)) {
+            if (globalSearch) {
+                rapport = rapportCCPService.genererRapportPortefeuilleClientRechercheGlobale(
+                        codeBureau,
+                        typeCompte,
+                        etatCompte,
+                        search
+                );
+            } else {
+                rapport = rapportCCPService.genererRapportPortefeuilleClientRecherche(
                         codeBureau,
                         pageable,
                         typeCompte,
-                        etatCompte
+                        etatCompte,
+                        search
                 );
+            }
+        } else {
+            rapport = rapportCCPService.genererRapportPortefeuilleClientFiltre(
+                    codeBureau,
+                    pageable,
+                    typeCompte,
+                    etatCompte
+            );
+        }
 
         log.debug("Rapport généré avec succès pour le bureau: {}", codeBureau);
 

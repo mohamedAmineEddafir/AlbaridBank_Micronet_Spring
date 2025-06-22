@@ -268,17 +268,17 @@ public class RapportCCPServiceImpl implements RapportCCPService {
         }
     }
 
-    /**
+    /*
      * Generates a report of the top 100 CCP accounts by balance for a specific bureau.
      *
      * @param codeBureau The code of the bureau for which the report is generated.
      * @return A {@link PortefeuilleClientCCP_Top100_DTO} object containing the top 100 accounts report.
-     */
+
     @Override
     @Transactional(readOnly = true)
     public PortefeuilleClientCCP_Top100_DTO genererRapportTop100(Long codeBureau) {
         return null;
-    }
+    }**/
 
     /**
      * <h1>ETAT PORTEFEUILLE CLIENT CCP M</h1>
@@ -465,6 +465,191 @@ public class RapportCCPServiceImpl implements RapportCCPService {
                 log.error("Des comptes avec un état incorrect ont été retournés pour l'état: {}",
                         etatCompteFiltre);
             }
+        }
+    }
+
+    /**
+     * <h1>ETAT PORTEFEUILLE CLIENT CCP M - RECHERCHE</h1>
+     * Generates a client portfolio report with search filtering.
+     *
+     * @param codeBureau Bureau code
+     * @param pageable   Pagination information
+     * @param typeCompte Optional account type filter
+     * @param etatCompte Optional account state filter
+     * @param searchTerm Search term to filter accounts
+     * @return A {@link PortefeuilleClientCCPRapportDTO} containing the filtered report
+     */
+    public PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientRecherche(
+            Long codeBureau,
+            Pageable pageable,
+            Integer typeCompte,
+            String etatCompte,
+            String searchTerm
+    ) {
+        validateBureauCode(codeBureau);
+        validateTypeCompte(typeCompte);
+
+        log.debug("Génération du rapport portefeuille client avec recherche - Bureau: {}, Type: {}, État: {}, Recherche: {}",
+                codeBureau, typeCompte, etatCompte, searchTerm);
+
+        BureauPosteCCP bureauPoste = getBureauPoste(codeBureau);
+        String etatCompteFiltre = validateEtatCompte(etatCompte);
+
+        return generateReportWithSearch(bureauPoste, pageable, typeCompte, etatCompteFiltre, searchTerm);
+    }
+
+    /**
+     * <h1>ETAT PORTEFEUILLE CLIENT CCP M - RECHERCHE GLOBALE</h1>
+     * Generates a client portfolio report with global search (non-paginated).
+     *
+     * @param codeBureau Bureau code
+     * @param typeCompte Optional account type filter
+     * @param etatCompte Optional account state filter
+     * @param searchTerm Search term to filter accounts
+     * @return A {@link PortefeuilleClientCCPRapportDTO} containing all matching accounts
+     */
+    public PortefeuilleClientCCPRapportDTO genererRapportPortefeuilleClientRechercheGlobale(
+            Long codeBureau,
+            Integer typeCompte,
+            String etatCompte,
+            String searchTerm
+    ) {
+        validateBureauCode(codeBureau);
+        validateTypeCompte(typeCompte);
+
+        log.debug("Génération du rapport portefeuille client avec recherche globale - Bureau: {}, Type: {}, État: {}, Recherche: {}",
+                codeBureau, typeCompte, etatCompte, searchTerm);
+
+        BureauPosteCCP bureauPoste = getBureauPoste(codeBureau);
+        String etatCompteFiltre = validateEtatCompte(etatCompte);
+
+        return generateReportWithGlobalSearch(bureauPoste, typeCompte, etatCompteFiltre, searchTerm);
+    }
+
+    /**
+     * Generates a report with search filtering and pagination.
+     *
+     * @param bureauPoste      The bureau entity
+     * @param pageable         The pagination information
+     * @param typeCompte       The account type filter (can be null)
+     * @param etatCompteFiltre The validated account state filter (can be null)
+     * @param searchTerm       The search term to filter accounts
+     * @return A {@link PortefeuilleClientCCPRapportDTO} containing the filtered portfolio report
+     * @throws ResponseStatusException If an error occurs during report generation
+     */
+    private PortefeuilleClientCCPRapportDTO generateReportWithSearch(
+            BureauPosteCCP bureauPoste,
+            Pageable pageable,
+            Integer typeCompte,
+            String etatCompteFiltre,
+            String searchTerm
+    ) {
+        try {
+            Page<CompteCCP> comptesPage = compteCCPRepository
+                    .findPortefeuilleClientsByBureauWithSearch(
+                            bureauPoste.getCodeBureau(),
+                            etatCompteFiltre,
+                            typeCompte,
+                            searchTerm,
+                            pageable
+                    );
+
+            PortefeuilleStats stats = compteCCPRepository
+                    .calculerStatistiquesPortefeuilleDetailAvecRecherche(
+                            bureauPoste.getCodeBureau(),
+                            etatCompteFiltre,
+                            typeCompte,
+                            searchTerm
+                    );
+
+            List<PortefeuilleClientCCPDetailDTO> comptesDTO = comptesPage.getContent()
+                    .stream()
+                    .map(rapportCCPMapper::toDetailDTO)
+                    .collect(Collectors.toList());
+
+            validateResults(etatCompteFiltre, comptesDTO);
+
+            return rapportCCPMapper.creerRapportPortefeuilleDetaillee(
+                    bureauPoste.getCodeBureau(),
+                    bureauPoste.getDesignation(),
+                    comptesDTO,
+                    stats
+            );
+
+        } catch (Exception e) {
+            log.error("Erreur lors de la génération du rapport avec recherche pour le bureau {}: {}",
+                    bureauPoste.getCodeBureau(), e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Erreur lors de la génération du rapport avec recherche",
+                    e
+            );
+        }
+    }
+
+    /**
+     * Generates a report with global search (non-paginated).
+     *
+     * @param bureauPoste      The bureau entity
+     * @param typeCompte       The account type filter (can be null)
+     * @param etatCompteFiltre The validated account state filter (can be null)
+     * @param searchTerm       The search term to filter accounts
+     * @return A {@link PortefeuilleClientCCPRapportDTO} containing all matching accounts
+     * @throws ResponseStatusException If an error occurs during report generation
+     */
+    private PortefeuilleClientCCPRapportDTO generateReportWithGlobalSearch(
+            BureauPosteCCP bureauPoste,
+            Integer typeCompte,
+            String etatCompteFiltre,
+            String searchTerm
+    ) {
+        try {
+            // Récupérer tous les comptes correspondant à la recherche (sans pagination)
+            List<CompteCCP> comptes = compteCCPRepository
+                    .findAllPortefeuilleClientsByBureauWithSearch(
+                            bureauPoste.getCodeBureau(),
+                            etatCompteFiltre,
+                            typeCompte,
+                            searchTerm
+                    );
+
+            // Calculer les statistiques
+            PortefeuilleStats stats = compteCCPRepository
+                    .calculerStatistiquesPortefeuilleDetailAvecRecherche(
+                            bureauPoste.getCodeBureau(),
+                            etatCompteFiltre,
+                            typeCompte,
+                            searchTerm
+                    );
+
+            // Convertir en DTOs
+            List<PortefeuilleClientCCPDetailDTO> comptesDTO = comptes.stream()
+                    .map(rapportCCPMapper::toDetailDTO)
+                    .collect(Collectors.toList());
+
+            validateResults(etatCompteFiltre, comptesDTO);
+
+            // Créer le rapport
+            PortefeuilleClientCCPRapportDTO rapport = rapportCCPMapper.creerRapportPortefeuilleDetaillee(
+                    bureauPoste.getCodeBureau(),
+                    bureauPoste.getDesignation(),
+                    comptesDTO,
+                    stats
+            );
+
+            // Indiquer que c'est une recherche globale dans le titre
+            rapport.setTitreRapport(rapport.getTitreRapport() + " - RECHERCHE GLOBALE");
+
+            return rapport;
+
+        } catch (Exception e) {
+            log.error("Erreur lors de la génération du rapport avec recherche globale pour le bureau {}: {}",
+                    bureauPoste.getCodeBureau(), e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Erreur lors de la génération du rapport avec recherche globale",
+                    e
+            );
         }
     }
 
