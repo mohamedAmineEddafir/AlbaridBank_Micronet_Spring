@@ -195,6 +195,50 @@ public class RapportClientCCPController {
     }
 
     /**
+     * Generates a complete financial movements report for a specific bureau.
+     *
+     * <p>This endpoint retrieves all financial movements for the specified bureau without pagination,
+     * ensuring that the report contains the complete dataset. It validates input parameters and calls
+     * the service layer to generate the report.</p>
+     *
+     * <p>The generated report includes:
+     * <ul>
+     *   <li>Bureau information</li>
+     *   <li>Complete list of financial movements</li>
+     *   <li>Summary statistics</li>
+     * </ul>
+     *
+     * @param codeAgence     The unique identifier of the bureau for which to generate the report.
+     *                       Must not be null.
+     * @param montantMinimum The minimum amount of movement to include in the report. Defaults to 0 if not provided.
+     * @param joursAvant     The number of days before today to filter movements. Defaults to 0 if not provided.
+     * @return A {@link ResponseEntity} containing the complete financial movements report.
+     */
+    @Operation(
+            summary = "Générer un rapport complet de mouvements financiers pour analyse",
+            description = "Récupère tous les mouvements financiers sans pagination pour l'analyse et les graphiques"
+    )
+    @GetMapping("/compte-mouvement-veille/complet")
+    public ResponseEntity<CompteMouvementVeilleDTO> genererRapportComplet(
+            @RequestParam Long codeAgence,
+            @RequestParam(required = false, defaultValue = "0") BigDecimal montantMinimum,
+            @RequestParam(required = false, defaultValue = "0") Integer joursAvant) {
+
+        log.info("Generating complete financial movements report for bureau: {}", codeAgence);
+        log.info("Minimum Account amount: {}", montantMinimum);
+        log.info("Days before movement: {}", joursAvant);
+
+        // Appel au service pour générer le rapport complet
+        CompteMouvementVeilleDTO rapport = rapportCCPService.rapportMouvementVeilleComplet(
+                codeAgence,
+                montantMinimum,
+                joursAvant
+        );
+
+        return ResponseEntity.ok(rapport);
+    }
+
+    /**
      * Endpoint to retrieve the total number of accounts and the global outstanding balance for a specific CCP bureau.
      *
      * <p>This method fetches global statistics for CCP accounts associated with a given postal bureau.

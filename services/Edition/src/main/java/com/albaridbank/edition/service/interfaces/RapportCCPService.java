@@ -31,6 +31,17 @@ public interface RapportCCPService {
     CompteMouvementVeilleDTO rapportMouvementVeille(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant, Pageable pageable);
 
     /**
+     * <h3>Génère un rapport complet des mouvements financiers</h3>
+     *
+     * Cette méthode génère un rapport complet des mouvements financiers
+     * @param codeBureau     Code de l'agence
+     * @param montantMinimum Montant minimum des mouvements à prendre en compte
+     * @param joursAvant     Nombre de jours avant la date actuelle (1 pour veille, 2 pour avant-veille)
+     * Génère un rapport complet (non paginé) des mouvements financiers pour l'analyse et les graphiques.
+     */
+    CompteMouvementVeilleDTO rapportMouvementVeilleComplet(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant);
+
+    /**
      * Génère un rapport du nombre total et de l'encours des comptes CCP
      *
      * @param codeBureau Code du bureau de poste

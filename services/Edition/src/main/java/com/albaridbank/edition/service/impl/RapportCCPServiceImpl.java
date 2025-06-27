@@ -21,6 +21,7 @@ import com.albaridbank.edition.mappers.ccp.CompteCCPMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -154,6 +155,95 @@ public class RapportCCPServiceImpl implements RapportCCPService {
                 bureau.getDesignation(),
                 dateRapport,
                 mouvementDTOs,
+                stats.getNombreComptes(),
+                stats.getMontantTotal(),
+                joursAvant,
+                montantMinimum
+        );
+    }
+
+    /**
+     * Generates a complete financial movement report for a specific bureau.
+     *
+     * <p>This method retrieves all financial movements for the specified bureau without pagination,
+     * ensuring that the report contains the complete dataset. It validates input parameters, calculates
+     * the report date, retrieves bureau information, and converts the movements into DTOs. Additionally,
+     * it calculates statistics and creates a detailed report.</p>
+     *
+     * <p>The generated report includes:
+     * <ul>
+     *   <li>Bureau information (code and designation)</li>
+     *   <li>Report metadata (date, number of days before today, minimum amount)</li>
+     *   <li>Complete list of financial movements</li>
+     *   <li>Summary statistics (total number of accounts and total amount)</li>
+     * </ul>
+     *
+     * @param codeBureau     The unique identifier of the bureau for which to generate the report.
+     *                       Must not be null.
+     * @param montantMinimum The minimum amount of movement to include in the report. If null or negative,
+     *                       defaults to 0.
+     * @param joursAvant     The number of days before today to filter movements (e.g., 0 for today,
+     *                       1 for yesterday, etc.). If null or invalid, defaults to 0.
+     * @return A {@link CompteMouvementVeilleDTO} containing the complete dataset and metadata for the report.
+     * @throws IllegalArgumentException If the bureau is not found.
+     * @throws RuntimeException         If an error occurs during the report generation process.
+     */
+    @Override
+    @Cacheable(value = "mouvementsComplets", key = "#codeBureau + '_' + #montantMinimum + '_' + #joursAvant")
+    public CompteMouvementVeilleDTO rapportMouvementVeilleComplet(Long codeBureau, BigDecimal montantMinimum, Integer joursAvant) {
+        log.info("Génération du rapport complet pour le bureau: {}, montant minimum: {}, jours avant: {}",
+                codeBureau, montantMinimum, joursAvant);
+
+        // Validation des paramètres
+        if (joursAvant == null || joursAvant < 0 || joursAvant > 2) {
+            joursAvant = 0;
+        }
+
+        if (montantMinimum == null || montantMinimum.compareTo(BigDecimal.ZERO) < 0) {
+            montantMinimum = BigDecimal.ZERO; // Par défaut tous les mouvements
+        }
+
+        // Calcul de la date du rapport
+        LocalDate dateRapport = LocalDate.now().minusDays(joursAvant);
+
+        // Récupération des informations de l'agence
+        BureauPosteCCP bureau = getBureauPoste(codeBureau);
+
+        // Conversion du codeBureau en BigDecimal pour la requête
+        BigDecimal codeBureauBD = new BigDecimal(codeBureau);
+
+        // Récupération de tous les mouvements sans pagination
+        List<MvtFinancierCCP> mouvements = mvtFinancierRepository
+                .findAllByDateMouvementAndCodeBureauAndMontantMin(
+                        dateRapport,
+                        codeBureauBD,
+                        montantMinimum
+                );
+
+        // Conversion des entités en DTOs
+        List<MouvementFinancierDTO> mouvementDTOs = mouvements.stream()
+                .map(mvtFinancierMapper::toMouvementFinancierDTO)
+                .collect(Collectors.toList());
+
+        // Création d'un PageImpl pour maintenir la compatibilité avec l'interface existante
+        Page<MouvementFinancierDTO> mouvementsPage = new PageImpl<>(
+                mouvementDTOs,
+                Pageable.unpaged(),
+                mouvementDTOs.size()
+        );
+
+        // Récupération des statistiques
+        MvtFinancierCCPRepository.MouvementStats stats = mvtFinancierRepository
+                .getStatistiques(dateRapport, codeBureauBD, montantMinimum);
+
+        log.info("Rapport complet généré avec succès. Nombre de mouvements: {}", mouvementDTOs.size());
+
+        // Création du rapport
+        return rapportCCPMapper.creerRapportMouvementVeille(
+                codeBureau,
+                bureau.getDesignation(),
+                dateRapport,
+                mouvementsPage,
                 stats.getNombreComptes(),
                 stats.getMontantTotal(),
                 joursAvant,

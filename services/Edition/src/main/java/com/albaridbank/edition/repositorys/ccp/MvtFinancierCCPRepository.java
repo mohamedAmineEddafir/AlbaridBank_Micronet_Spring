@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Repository interface for managing {@link MvtFinancierCCP} entities.
@@ -68,4 +69,26 @@ public interface MvtFinancierCCPRepository extends JpaRepository<MvtFinancierCCP
             @Param("date") LocalDate date,
             @Param("codeBureau") BigDecimal codeBureau,
             @Param("montantMinimum") BigDecimal montantMinimum);
+
+    /**
+     * Trouve tous les mouvements financiers pour une date, un bureau et un montant minimum spécifiques sans pagination.
+     * Cette méthode est optimisée pour l'analyse des données et les graphiques.
+     *
+     * @param dateMouvement  La date des mouvements.
+     * @param codeBureau     Le code du bureau.
+     * @param montantMinimum Le montant minimum des mouvements.
+     * @return Une liste de mouvements financiers.
+     */
+    @Query(value = """
+            SELECT m FROM MvtFinancierCCP m
+            WHERE m.dateMouvement = :dateMouvement
+            AND m.codeBureau = :codeBureau
+            AND m.montant >= :montantMinimum
+            ORDER BY m.montant DESC
+            """)
+    List<MvtFinancierCCP> findAllByDateMouvementAndCodeBureauAndMontantMin(
+            @Param("dateMouvement") LocalDate dateMouvement,
+            @Param("codeBureau") BigDecimal codeBureau,
+            @Param("montantMinimum") BigDecimal montantMinimum
+    );
 }
