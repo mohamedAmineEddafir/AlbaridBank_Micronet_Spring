@@ -8,3 +8,8 @@ spring:
   cloud:
     config:
       override-system-properties: false # Disable overriding of system properties
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0 # Set to 1.0 for full tracing, adjust as needed

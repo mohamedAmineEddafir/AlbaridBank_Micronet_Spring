@@ -30,6 +30,28 @@ services:
         - microservices-net
       restart: unless-stopped  # Restart policy
 
+  zipkin:
+    container_name: albarid-zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411" # Expose Zipkin UI on port 9411
+    networks:
+      - microservices-net
+    restart: unless-stopped  # Restart policy
+
+  keycloak:
+    container_name: albarid-keycloak
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - 9098:8080 # Expose Keycloak on port 9090
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    networks:
+      - microservices-net
+    command:
+      - "start-dev"
+
 networks:
   microservices-net:
     driver: bridge
