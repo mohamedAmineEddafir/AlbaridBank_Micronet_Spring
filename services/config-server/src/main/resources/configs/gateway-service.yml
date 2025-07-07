@@ -2,47 +2,37 @@ spring:
   cloud:
     gateway:
       globalcors:
+        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "http://localhost:4200"
+            allowedOriginPatterns: "http://localhost:4200"
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
               - OPTIONS
+              - PATCH
             allowedHeaders: "*"
-            exposedHeaders:
-              - "Content-Disposition"
-              - "X-User-Agent"
             allowCredentials: true
             maxAge: 3600
       discovery:
         locator:
-          enabled: true # Enable service discovery for routing
+          enabled: true
+          lower-case-service-id: true
       routes:
-        # Customer Service Route
         - id: customer-service
-          uri: lb:http://CUSTOMER-SERVICE # Load balancer URI for customer service using service discovery
+          uri: lb://customer-service
           predicates:
-            - Path=/api/v1/client/** # Route for customer service
-        - id: customer-service
-          uri: lb:http://CUSTOMER-SERVICE # Load balancer URI for customer service using service discovery
-          predicates:
-            - Path=/api/v1/compte/** # Route for account service
-        # Branche Service Route
+            - Path=/api/v1/client/**,/api/v1/compte/**
         - id: branche-service
-          uri: lb:http://BRANCHE-SERVICE # Load balancer URI for branche service using service discovery
+          uri: lb://branche-service
           predicates:
-            - Path=/api/v1/branches/** # Route for branche service
-        # Edition Service Route
+            - Path=/api/v1/branches/**
         - id: edition-service
-          uri: lb:http://EDITION-SERVICE # Load balancer URI for edition service
-          predicates:
-            - Path=/api/v1/rapportccp/** # Route for edition service
-        - id: edition-service-excel
-          uri: lb:http://EDITION-SERVICE
+          uri: lb://edition-service
           predicates:
             - Path=/api/v1/export/excel/**
+
 server:
-  port: 8222 # Port to run the gateway service
+  port: 8222
