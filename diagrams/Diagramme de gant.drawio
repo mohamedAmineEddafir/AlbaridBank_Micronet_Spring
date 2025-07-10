@@ -362,179 +362,179 @@
     </mxGraphModel>
   </diagram>
   <diagram name="Diagramme de Gant" id="3pxqGlvPruiqKpHqNYfg">
-    <mxGraphModel dx="1901" dy="1099" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="839" dy="485" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="0Ufu9imzEAGmXU703owS-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#667eea;strokeColor=none;gradientColor=#764ba2;gradientDirection=east;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#667eea;strokeColor=none;gradientColor=#764ba2;gradientDirection=east;" parent="1" vertex="1">
           <mxGeometry x="40" y="40" width="1586" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-2" value="DIAGRAMME DE GANTT - PROJET" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#FFFFFF;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-2" value="DIAGRAMME DE GANTT - PROJET" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
           <mxGeometry x="40" y="50" width="1586" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-3" value="Planning technique dÃ©taillÃ© â€¢ Mars - Juillet 2025 â€¢ 121 jours â€¢ 14 tÃ¢ches" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#FFFFFF;opacity=90;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-3" value="Planning technique dÃ©taillÃ© â€¢ Mars - Juillet 2025 â€¢ 121 jours â€¢ 14 tÃ¢ches" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#FFFFFF;opacity=90;" parent="1" vertex="1">
           <mxGeometry x="40" y="80" width="1586" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecf0f1;strokeColor=#bdc3c7;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecf0f1;strokeColor=#bdc3c7;" parent="1" vertex="1">
           <mxGeometry x="40" y="140" width="1586" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-5" value="TÃ‚CHES TECHNIQUES" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-5" value="TÃ‚CHES TECHNIQUES" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="145" width="350" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-6" value="MARS 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-6" value="MARS 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" parent="1" vertex="1">
           <mxGeometry x="430" y="145" width="200" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-7" value="AVRIL 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-7" value="AVRIL 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" parent="1" vertex="1">
           <mxGeometry x="650" y="145" width="250" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-8" value="MAI 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-8" value="MAI 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" parent="1" vertex="1">
           <mxGeometry x="920" y="145" width="250" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-9" value="JUIN 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-9" value="JUIN 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" parent="1" vertex="1">
           <mxGeometry x="1190" y="145" width="250" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-10" value="JUILLET 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-10" value="JUILLET 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#7f8c8d;" parent="1" vertex="1">
           <mxGeometry x="1460" y="145" width="154" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-11" value="" style="shape=line;strokeColor=#bdc3c7;strokeWidth=2;html=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-11" value="" style="shape=line;strokeColor=#bdc3c7;strokeWidth=2;html=1;" parent="1" vertex="1">
           <mxGeometry x="420" y="140" height="600" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="180" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-13" value="Analyse technique et recueil des besoins" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-13" value="Analyse technique et recueil des besoins" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="185" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-14" value="7 jours (13-19 Mars)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e74c3c;strokeColor=#c0392b;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-14" value="7 jours (13-19 Mars)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e74c3c;strokeColor=#c0392b;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="423" y="185" width="70" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-15" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-15" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="215" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-16" value="Conception UML et modÃ©lisation systÃ¨me" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-16" value="Conception UML et modÃ©lisation systÃ¨me" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="220" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-17" value="7 jours (20-26 Mars)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f39c12;strokeColor=#e67e22;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-17" value="7 jours (20-26 Mars)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f39c12;strokeColor=#e67e22;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="496" y="220" width="70" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-18" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-18" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="250" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-19" value="Architecture logicielle (microservices + services)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-19" value="Architecture logicielle (microservices + services)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="255" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-20" value="7 jours (27 Mars-2 Avril)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f39c12;strokeColor=#e67e22;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-20" value="7 jours (27 Mars-2 Avril)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f39c12;strokeColor=#e67e22;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="569" y="255" width="70" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-21" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-21" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="285" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-22" value="ImplÃ©mentation du backend (Spring Boot)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-22" value="ImplÃ©mentation du backend (Spring Boot)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="290" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-23" value="18 jours (3-20 Avril)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#229954;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-23" value="18 jours (3-20 Avril)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#229954;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="642" y="290" width="140" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-24" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-24" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="320" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-25" value="Documentation API avec Swagger (OpenAPI)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-25" value="Documentation API avec Swagger (OpenAPI)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="325" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-26" value="&lt;font&gt;5 jours&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#229954;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-26" value="&lt;font&gt;5 jours&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#229954;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="785" y="325" width="50" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-27" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-27" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="355" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-28" value="Tests backend (API + Postman)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-28" value="Tests backend (API + Postman)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="360" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-29" value="6 jours (26 Avril-1 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#229954;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-29" value="6 jours (26 Avril-1 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27ae60;strokeColor=#229954;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="838" y="360" width="60" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-30" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-30" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="390" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-31" value="ImplÃ©mentation du frontend (Angular + Charts)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-31" value="ImplÃ©mentation du frontend (Angular + Charts)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="395" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-32" value="14 jours (2-15 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#7d3c98;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-32" value="14 jours (2-15 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8e44ad;strokeColor=#7d3c98;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="903" y="395" width="120" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="425" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-34" value="IntÃ©gration backend / frontend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-34" value="IntÃ©gration backend / frontend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="430" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-35" value="7 jours (16-22 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3498db;strokeColor=#2980b9;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-35" value="7 jours (16-22 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3498db;strokeColor=#2980b9;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1026" y="430" width="70" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-36" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-36" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="460" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-37" value="FonctionnalitÃ©s d&#39;export (PDF &amp; Excel)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-37" value="FonctionnalitÃ©s d&#39;export (PDF &amp; Excel)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="465" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-38" value="6 jours (23-28 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3498db;strokeColor=#2980b9;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-38" value="6 jours (23-28 Mai)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3498db;strokeColor=#2980b9;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1099" y="465" width="60" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-39" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-39" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="495" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-40" value="Mise en place du monitoring (Grafana, Loki, Promtail)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-40" value="Mise en place du monitoring (Grafana, Zipkin)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="500" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-41" value="7 jours (29 Mai-4 Juin)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#138d75;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-41" value="7 jours (29 Mai-4 Juin)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#138d75;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1162" y="500" width="70" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-42" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-42" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="530" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-43" value="Configuration centralisÃ©e (Spring Config Server)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-43" value="Configuration centralisÃ©e (Spring Config Server)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="535" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-44" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;5 jours (5-9 Juin)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#138d75;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-44" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;5 jours (5-9 Juin)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16a085;strokeColor=#138d75;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1235" y="535" width="50" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-45" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-45" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="565" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-46" value="Finalisation technique, revue de code, validation" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-46" value="Finalisation technique, revue de code, validation" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="570" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-47" value="10 jours (10-19 Juin)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#2c3e50;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-47" value="10 jours (10-19 Juin)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#2c3e50;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1288" y="570" width="100" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-48" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-48" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="600" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-49" value="PÃ©riode de stabilisation, dÃ©mo et ajustements techniques" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-49" value="PÃ©riode de stabilisation, dÃ©mo et ajustements techniques" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="605" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-50" value="14 jours (20 Juin-3 Juillet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#2c3e50;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-50" value="14 jours (20 Juin-3 Juillet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#2c3e50;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1391" y="605" width="120" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-51" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-51" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#ecf0f1;" parent="1" vertex="1">
           <mxGeometry x="40" y="635" width="1586" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-52" value="PrÃ©paration des livrables techniques et archivage" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-52" value="PrÃ©paration des livrables techniques et archivage" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#2c3e50;" parent="1" vertex="1">
           <mxGeometry x="60" y="640" width="350" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-53" value="8 jours (4-11 Juillet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#2c3e50;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-53" value="8 jours (4-11 Juillet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495e;strokeColor=#2c3e50;fontColor=#FFFFFF;fontSize=10;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="1514" y="640" width="80" height="25" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-54" value="í ½í³… DÃ‰BUT: 13 MARS 2025" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#27ae60;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-54" value="í ½í³… DÃ‰BUT: 13 MARS 2025" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#27ae60;" parent="1" vertex="1">
           <mxGeometry x="40" y="688" width="200" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-55" value="í ¼í¿ FIN: 11 JUILLET 2025" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#e74c3c;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-55" value="í ¼í¿ FIN: 11 JUILLET 2025" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#e74c3c;" parent="1" vertex="1">
           <mxGeometry x="1426" y="688" width="200" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-56" value="âš¡ CHEMIN CRITIQUE: Toutes les tÃ¢ches sont sÃ©quentielles" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#f39c12;" vertex="1" parent="1">
+        <mxCell id="0Ufu9imzEAGmXU703owS-56" value="âš¡ CHEMIN CRITIQUE: Toutes les tÃ¢ches sont sÃ©quentielles" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#f39c12;" parent="1" vertex="1">
           <mxGeometry x="306" y="688" width="1054" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="0Ufu9imzEAGmXU703owS-57" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="0Ufu9imzEAGmXU703owS-52" target="0Ufu9imzEAGmXU703owS-5">
+        <mxCell id="0Ufu9imzEAGmXU703owS-57" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0Ufu9imzEAGmXU703owS-52" target="0Ufu9imzEAGmXU703owS-5" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="608" y="474" as="sourcePoint" />
             <mxPoint x="658" y="424" as="targetPoint" />
