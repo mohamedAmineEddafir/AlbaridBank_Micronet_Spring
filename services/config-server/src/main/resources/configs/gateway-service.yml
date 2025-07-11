@@ -32,7 +32,7 @@ spring:
         - id: edition-service
           uri: lb://edition-service
           predicates:
-            - Path=/api/v1/export/excel/**
+            - Path=/api/v1/export/**,/api/v1/rapportccp/**
 
 server:
   port: 8222
